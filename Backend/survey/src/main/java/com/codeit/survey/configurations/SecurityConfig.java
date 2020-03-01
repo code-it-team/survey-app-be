@@ -18,15 +18,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserDetailService);
-
-        auth.inMemoryAuthentication()
-                .withUser("jalil.jarjanazy")
-                .password("testPass")
-                .roles("ADMIN")
-                .and()
-                .withUser("hazem.abiad")
-                .password("testPass")
-                .roles("ADMIN");
     }
     @Bean
     public PasswordEncoder getPasswordEncoder (){
