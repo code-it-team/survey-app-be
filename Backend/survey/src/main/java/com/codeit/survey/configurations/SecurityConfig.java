@@ -29,11 +29,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // TODO add the actual authorization
-        http.authorizeRequests()
-                .antMatchers("/admin")
-                .hasRole("ADMIN")
-                .antMatchers("/authenticate").permitAll()
-                .anyRequest().authenticated();
+        http.csrf().disable()
+                .authorizeRequests().antMatchers("/authenticate").permitAll().
+                anyRequest().authenticated();
     }
 
     @Override
