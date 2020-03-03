@@ -1,5 +1,6 @@
 package com.codeit.survey.configurations;
 
+import com.codeit.survey.filters.JwtRequestFilter;
 import com.codeit.survey.services.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,13 +9,22 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private CustomUserDetailService customUserDetailService;
+    private JwtRequestFilter jwtRequestFilter;
+
     @Autowired
-    CustomUserDetailService customUserDetailService;
+    public SecurityConfig(CustomUserDetailService customUserDetailService, JwtRequestFilter jwtRequestFilter){
+        this.customUserDetailService = customUserDetailService;
+        this.jwtRequestFilter = jwtRequestFilter;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -28,10 +38,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // TODO add the actual authorization
         http.csrf().disable()
                 .authorizeRequests().antMatchers("/authenticate").permitAll().
-                anyRequest().authenticated();
+                antMatchers("/admin").hasRole("ADMIN")
+                .anyRequest().authenticated()
+                .and().sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);//this tells Spring to not run its default process creating sessions
+
+        /* Hey Spring, add this filter before the username password filter */
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override

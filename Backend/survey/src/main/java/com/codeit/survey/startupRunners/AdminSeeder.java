@@ -27,12 +27,17 @@ public class AdminSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         Authority adminAuthority = new Authority("ROLE_ADMIN", new ArrayList<SurveyUser>());
+        Authority userAuthority = new Authority("ROLE_USER", new ArrayList<SurveyUser>());
 
         SurveyUser jalil = new SurveyUser("jalil.jarjanazy", "testPass", true, adminAuthority);
         SurveyUser hazem = new SurveyUser("hazem.alabiad", "testPass", true, adminAuthority);
 
-        authorityRepo.save(adminAuthority);
-        userRepo.saveAll(Arrays.asList(jalil, hazem));
+        SurveyUser testUser = new SurveyUser("test.test", "testPass", true, userAuthority);
+
+
+
+        authorityRepo.saveAll(Arrays.asList(adminAuthority, userAuthority));
+        userRepo.saveAll(Arrays.asList(jalil, hazem, testUser));
 
     }
 }
