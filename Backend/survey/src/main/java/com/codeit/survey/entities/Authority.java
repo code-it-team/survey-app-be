@@ -15,7 +15,10 @@ public class Authority {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
+
+    @Column(unique = true)
     String role;
+
 
     @OneToMany(mappedBy = "authority")
     List<SurveyUser> users;

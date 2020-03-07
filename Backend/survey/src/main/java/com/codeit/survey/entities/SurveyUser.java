@@ -18,7 +18,7 @@ public class SurveyUser{
 
     String username;
     String password;
-    boolean enabled;
+    boolean enabled = true;
     @ManyToOne()
     Authority authority;
 
