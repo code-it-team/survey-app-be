@@ -1,0 +1,104 @@
+{
+	"info": {
+		"_postman_id": "fb920cb1-1748-42be-81ba-9ddc76e3b3c4",
+		"name": "Survey",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "{Server URL}/authenticate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"jalil.jarjanazy\",\n    \"password\": \"testPass\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{Server URL}/authenticate",
+					"host": [
+						"{Server URL}"
+					],
+					"path": [
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{Server URL}/addUser",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {JWT token}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\" : \"ahmad\",\n\t\"password\" : \"password\",\n\t\"authority\":\n\t\t{\n\t\t\t\"role\" : \"ROLE_USER\"\n\t\t}\n\t\t\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{Server URL}/addUser",
+					"host": [
+						"{Server URL}"
+					],
+					"path": [
+						"addUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{Server URL}/dashboard",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {JWT token}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{Server URL}/dashboard",
+					"host": [
+						"{Server URL}"
+					],
+					"path": [
+						"dashboard"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
