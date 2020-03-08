@@ -17,8 +17,3 @@ public class DashboardService {
     }
 
 }
-
-class Bill{
-    String name;
-    String 
-}

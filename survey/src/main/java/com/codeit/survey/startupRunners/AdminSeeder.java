@@ -1,6 +1,7 @@
 package com.codeit.survey.startupRunners;
 
 import com.codeit.survey.entities.Authority;
+import com.codeit.survey.entities.Survey;
 import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.repositories.AuthorityRepo;
 import com.codeit.survey.repositories.UserRepo;
@@ -29,10 +30,10 @@ public class AdminSeeder implements CommandLineRunner {
         Authority adminAuthority = new Authority("ROLE_ADMIN", new ArrayList<SurveyUser>());
         Authority userAuthority = new Authority("ROLE_USER", new ArrayList<SurveyUser>());
 
-        SurveyUser jalil = new SurveyUser("jalil.jarjanazy", "testPass", true, adminAuthority);
-        SurveyUser hazem = new SurveyUser("hazem.alabiad", "testPass", true, adminAuthority);
+        SurveyUser jalil = new SurveyUser("jalil.jarjanazy", "testPass", true, adminAuthority, new ArrayList<>());
+        SurveyUser hazem = new SurveyUser("hazem.alabiad", "testPass", true, adminAuthority, new ArrayList<>());
 
-        SurveyUser testUser = new SurveyUser("test.test", "testPass", true, userAuthority);
+        SurveyUser testUser = new SurveyUser("test.test", "testPass", true, userAuthority, new ArrayList<>());
 
 
 
