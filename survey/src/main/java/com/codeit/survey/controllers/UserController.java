@@ -19,7 +19,7 @@ public class UserController {
     }
 
     @PostMapping("/addUser")
-    public SurveyUserDTO addUser(@RequestBody SurveyUser surveyUser){
+    public ResponseEntity<?> addUser(@RequestBody SurveyUser surveyUser){
         return userService.addUser(surveyUser);
     }
 }

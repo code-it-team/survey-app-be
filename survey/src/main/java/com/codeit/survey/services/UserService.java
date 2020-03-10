@@ -7,6 +7,8 @@ import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.repositories.AuthorityRepo;
 import com.codeit.survey.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -24,10 +26,18 @@ public class UserService {
         this.surveyUserDTO = surveyUserDTO;
     }
 
-    public SurveyUserDTO addUser(SurveyUser surveyUser){
+    public ResponseEntity<?> addUser(SurveyUser surveyUser){
+        // check for username existence
+        if(userRepo.findByUsername(surveyUser.getUsername()).isPresent()){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
         Authority authority = authorityRepo.findAuthorityByRole(surveyUser.getAuthority().getRole());
         surveyUser.setAuthority(authority);
-        return surveyUserDTO.createFromSurveyUser(userRepo.save(surveyUser));
+        return ResponseEntity.ok( // return an OK
+                surveyUserDTO.createFromSurveyUser( // create a DTO for it
+                        userRepo.save(surveyUser) // save the new user
+                )
+        );
     }
 
 
