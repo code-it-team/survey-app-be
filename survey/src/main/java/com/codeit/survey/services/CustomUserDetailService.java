@@ -4,6 +4,7 @@ import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.repositories.UserRepo;
 import com.codeit.survey.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,13 +17,13 @@ public class CustomUserDetailService implements UserDetailsService {
     UserRepo userRepo;
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userName) throws BadCredentialsException {
         SurveyUser user = userRepo.findByUsername(userName).orElse(null);
 
         if (user != null) {
             return new CustomUserDetails(user);
         }else{
-            return null;
+            throw new BadCredentialsException(String.format("Username or password are incorrect"));
         }
 
     }

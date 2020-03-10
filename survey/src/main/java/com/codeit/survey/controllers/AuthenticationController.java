@@ -40,10 +40,9 @@ public class AuthenticationController {
                             authenticationRequest.getPassword()
                     )
             );
-        }catch (BadCredentialsException e){
-            throw new Exception("incorrect username or password", e);
+        }catch (Exception e){
+            return ResponseEntity.notFound().build();
         }
-
         // authentication done successfully
         // get the userDetails
         UserDetails userDetails =  customUserDetailService.loadUserByUsername(authenticationRequest.getUsername());
