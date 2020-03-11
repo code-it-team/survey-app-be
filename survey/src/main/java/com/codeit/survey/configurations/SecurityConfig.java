@@ -38,9 +38,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeRequests().antMatchers("/authenticate", "/h2-console/**").permitAll().
-                antMatchers("/admin").hasRole("ADMIN")
+        http
+                .cors()
+                .and()
+                .csrf().disable()
+                .authorizeRequests().antMatchers("/authenticate", "/h2-console/**").permitAll()
+                .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);//this tells Spring to not run its default process creating sessions
