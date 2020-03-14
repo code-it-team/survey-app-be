@@ -14,20 +14,7 @@ import java.util.UUID;
 @Component
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor
 public class SurveyUserDTO {
-    private UUID id;
+    private int id;
     private String username;
     private List<AuthorityDTO> authorities;
-
-    public SurveyUserDTO createFromSurveyUser(SurveyUser surveyUser){
-        return new SurveyUserDTO(
-                surveyUser.getId(),
-                surveyUser.getUsername(),
-                Arrays.asList(
-                        new AuthorityDTO(
-                                surveyUser.getAuthority().getId(),
-                                surveyUser.getAuthority().getRole())
-                )
-        );
-    }
-
 }

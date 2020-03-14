@@ -16,7 +16,7 @@ import java.util.UUID;
 public class SurveyUser{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    UUID id;
+    Integer id;
 
     String username;
     String password;

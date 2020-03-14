@@ -17,13 +17,23 @@ import java.util.Arrays;
 public class UserService {
     private UserRepo userRepo;
     private AuthorityRepo authorityRepo;
-    private SurveyUserDTO surveyUserDTO;
 
     @Autowired
-    public UserService(UserRepo userRepo, AuthorityRepo authorityRepo, SurveyUserDTO surveyUserDTO){
+    public UserService(UserRepo userRepo, AuthorityRepo authorityRepo){
         this.userRepo = userRepo;
         this.authorityRepo = authorityRepo;
-        this.surveyUserDTO = surveyUserDTO;
+    }
+
+    public SurveyUserDTO createDTOFromSurveyUser(SurveyUser surveyUser){
+        return new SurveyUserDTO(
+                surveyUser.getId(),
+                surveyUser.getUsername(),
+                Arrays.asList(
+                        new AuthorityDTO(
+                                surveyUser.getAuthority().getId(),
+                                surveyUser.getAuthority().getRole())
+                )
+        );
     }
 
     public ResponseEntity<?> addUser(SurveyUser surveyUser){
@@ -34,7 +44,7 @@ public class UserService {
         Authority authority = authorityRepo.findAuthorityByRole(surveyUser.getAuthority().getRole());
         surveyUser.setAuthority(authority);
         return ResponseEntity.ok( // return an OK
-                surveyUserDTO.createFromSurveyUser( // create a DTO for it
+                createDTOFromSurveyUser( // create a DTO for it
                         userRepo.save(surveyUser) // save the new user
                 )
         );

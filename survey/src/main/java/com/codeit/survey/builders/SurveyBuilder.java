@@ -4,11 +4,11 @@ package com.codeit.survey.builders;
 import com.codeit.survey.entities.Survey;
 import com.codeit.survey.entities.SurveyUser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class SurveyBuilder {
     private SurveyUser surveyUser;
-    private Date creationDate;
+    private LocalDateTime creationDate;
     private String name;
 
 
@@ -17,7 +17,7 @@ public class SurveyBuilder {
         return this;
     }
 
-    public SurveyBuilder setCreationDate(Date creationDate){
+    public SurveyBuilder setCreationDate(LocalDateTime creationDate){
         this.creationDate = creationDate;
         return this;
     }
