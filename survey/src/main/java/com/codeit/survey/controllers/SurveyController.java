@@ -26,8 +26,8 @@ public class SurveyController {
         return surveyService.addSurvey(survey);
     }
 
-    @GetMapping("/getSurveyByUser")
-    public ResponseEntity<?> getSurveyByUser(@RequestBody SurveyUser surveyUser){
+    @GetMapping("/getSurveysByUser")
+    public ResponseEntity<?> getSurveysByUser(@RequestBody SurveyUser surveyUser){
         return surveyService.getSurveysByUser(surveyUser);
     }
 

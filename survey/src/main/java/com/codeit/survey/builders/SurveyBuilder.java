@@ -1,16 +1,24 @@
 package com.codeit.survey.builders;
 
 
+import com.codeit.survey.entities.Question;
 import com.codeit.survey.entities.Survey;
 import com.codeit.survey.entities.SurveyUser;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class SurveyBuilder {
     private SurveyUser surveyUser;
     private LocalDateTime creationDate;
     private String name;
+    private List<Question> questions;
 
+
+    public SurveyBuilder setSurveyQuestions(List<Question> questions){
+        this.questions = questions;
+        return this;
+    }
 
     public SurveyBuilder setSurveyUser(SurveyUser surveyUser){
         this.surveyUser = surveyUser;
@@ -28,7 +36,7 @@ public class SurveyBuilder {
     }
 
     public Survey buildSurvey(){
-        return new Survey(null, surveyUser, creationDate, name);
+        return new Survey(null, surveyUser, creationDate, name, questions);
     }
 
 }
