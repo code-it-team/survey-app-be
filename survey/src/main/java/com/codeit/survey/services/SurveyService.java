@@ -1,6 +1,7 @@
 package com.codeit.survey.services;
 
 import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
+import com.codeit.survey.DTOs.EntityDTOs.SurveysDTO;
 import com.codeit.survey.entities.Survey;
 import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.repositories.SurveyRepo;
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class SurveyService {
@@ -25,13 +28,19 @@ public class SurveyService {
         this.userService = userService;
     }
 
-    public SurveyDTO createDTOFromSurvey(Survey survey){
-        return new SurveyDTO(
-                survey.getId(),
-                survey.getCreationDate(),
-                survey.getName(),
-                userService.createDTOFromSurveyUser(survey.getSurveyUser())
-                );
+    public SurveysDTO createDTOFromSurveys(List<Survey> surveys){
+        SurveysDTO surveysDTO = new SurveysDTO(new ArrayList<>());
+
+        for (Survey survey : surveys){
+
+            surveysDTO.getSurveyDTOS().add(new SurveyDTO(
+                    survey.getId(),
+                    survey.getCreationDate(),
+                    survey.getName(),
+                    userService.createDTOFromSurveyUser(survey.getSurveyUser())
+            ));
+        }
+        return surveysDTO;
     }
 
 
@@ -48,11 +57,11 @@ public class SurveyService {
         }
     }
 
-    public ResponseEntity<?> getSurveyByUser(SurveyUser surveyUser){
-        Survey survey = surveyRepo.findSurveyBySurveyUser(surveyUser);
+    public ResponseEntity<?> getSurveysByUser(SurveyUser surveyUser){
+        List<Survey> surveys = surveyRepo.findSurveysBySurveyUser(surveyUser);
 
-        if (survey != null){
-            return ResponseEntity.ok(createDTOFromSurvey(survey));
+        if (surveys != null){
+            return ResponseEntity.ok(createDTOFromSurveys(surveys));
         }
         return ResponseEntity.badRequest().build();
     }

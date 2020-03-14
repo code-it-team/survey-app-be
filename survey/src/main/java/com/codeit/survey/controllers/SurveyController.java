@@ -28,7 +28,7 @@ public class SurveyController {
 
     @GetMapping("/getSurveyByUser")
     public ResponseEntity<?> getSurveyByUser(@RequestBody SurveyUser surveyUser){
-        return surveyService.getSurveyByUser(surveyUser);
+        return surveyService.getSurveysByUser(surveyUser);
     }
 
 
