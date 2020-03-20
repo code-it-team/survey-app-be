@@ -28,7 +28,7 @@ public class Survey {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "survey")
+    @OneToMany(mappedBy = "survey", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Question> questions;
 
 }

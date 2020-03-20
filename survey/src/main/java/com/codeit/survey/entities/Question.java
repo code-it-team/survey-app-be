@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
@@ -17,5 +18,8 @@ public class Question {
 
     @ManyToOne
     private Survey survey;
+
+    @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Choice> choices;
 
 }
