@@ -20,6 +20,7 @@ public class Question {
     private Survey survey;
 
     @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.ALL)
+    @Size(min = 2, max = 8)
     private List<Choice> choices;
 
 }
