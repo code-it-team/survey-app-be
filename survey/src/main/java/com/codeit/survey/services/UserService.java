@@ -37,17 +37,22 @@ public class UserService {
     }
 
     public ResponseEntity<?> addUser(SurveyUser surveyUser){
-        // check for username existence
-        if(userRepo.findByUsername(surveyUser.getUsername()).isPresent()){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        try{
+            // check for username existence
+            if(userRepo.findByUsername(surveyUser.getUsername()).isPresent()){
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+            Authority authority = authorityRepo.findAuthorityByRole(surveyUser.getAuthority().getRole());
+            surveyUser.setAuthority(authority);
+            return ResponseEntity.ok( // return an OK
+                    createDTOFromSurveyUser( // create a DTO for it
+                            userRepo.save(surveyUser) // save the new user
+                    )
+            );
+        }catch (Exception e){
+            return ResponseEntity.badRequest().build();
         }
-        Authority authority = authorityRepo.findAuthorityByRole(surveyUser.getAuthority().getRole());
-        surveyUser.setAuthority(authority);
-        return ResponseEntity.ok( // return an OK
-                createDTOFromSurveyUser( // create a DTO for it
-                        userRepo.save(surveyUser) // save the new user
-                )
-        );
+
     }
 
 

@@ -18,7 +18,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/addUser")
+    @PostMapping("/signUp")
     public ResponseEntity<?> addUser(@RequestBody SurveyUser surveyUser){
         return userService.addUser(surveyUser);
     }
