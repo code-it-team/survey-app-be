@@ -22,15 +22,17 @@ import java.util.List;
 public class SurveyService {
     private SurveyRepo surveyRepo;
     private UserService userService;
+    private QuestionService questionService;
 
 
     @Autowired
-    public SurveyService(SurveyRepo surveyRepo, UserService userService){
+    public SurveyService(SurveyRepo surveyRepo, UserService userService, QuestionService questionService){
         this.surveyRepo = surveyRepo;
         this.userService = userService;
+        this.questionService = questionService;
     }
 
-    public SurveysDTO createDTOFromSurveys(List<Survey> surveys){
+    private SurveysDTO createDTOFromSurveys(List<Survey> surveys){
         SurveysDTO surveysDTO = new SurveysDTO(new ArrayList<>());
 
         for (Survey survey : surveys){
@@ -39,7 +41,8 @@ public class SurveyService {
                     survey.getId(),
                     survey.getCreationDate(),
                     survey.getName(),
-                    userService.createDTOFromSurveyUser(survey.getSurveyUser())
+                    userService.createDTOFromSurveyUser(survey.getSurveyUser()),
+                    questionService.createDTOsFromQuestions(survey.getQuestions())
             ));
         }
         return surveysDTO;

@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
@@ -16,5 +17,6 @@ public class SurveyDTO {
     private Integer id;
     private LocalDateTime creationDate;
     private String name;
-    SurveyUserDTO surveyUserDTO;
+    private SurveyUserDTO surveyUserDTO;
+    private List<QuestionDTO> questionDTOs;
 }
