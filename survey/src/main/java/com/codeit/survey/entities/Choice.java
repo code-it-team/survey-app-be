@@ -17,7 +17,8 @@ public class Choice {
     @Size(max = 200)
     private String body;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
     private Question question;
 
 }

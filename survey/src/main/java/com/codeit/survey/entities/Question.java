@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,10 +18,10 @@ public class Question {
     private String body;
 
     @ManyToOne
+    @JoinColumn(nullable = false)
     private Survey survey;
 
     @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.ALL)
     @Size(min = 2, max = 8)
-    private List<Choice> choices;
-
+    private List<Choice> choices = new ArrayList<>();
 }

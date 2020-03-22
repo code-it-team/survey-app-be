@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,6 +30,5 @@ public class Survey {
     private String name;
 
     @OneToMany(mappedBy = "survey", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Question> questions;
-
+    private List<Question> questions = new ArrayList<>();
 }

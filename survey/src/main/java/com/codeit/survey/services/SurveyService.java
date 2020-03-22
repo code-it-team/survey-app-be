@@ -2,6 +2,8 @@ package com.codeit.survey.services;
 
 import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
 import com.codeit.survey.DTOs.EntityDTOs.SurveysDTO;
+import com.codeit.survey.entities.Choice;
+import com.codeit.survey.entities.Question;
 import com.codeit.survey.entities.Survey;
 import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.repositories.SurveyRepo;
@@ -43,12 +45,23 @@ public class SurveyService {
         return surveysDTO;
     }
 
+    private void setQuestionsAndChoices(Survey survey){
+        // set the survey of the question
+        for (Question question : survey.getQuestions()){
+            question.setSurvey(survey);
+            // set the question of the choice
+            for (Choice choice : question.getChoices()){
+                choice.setQuestion(question);
+            }
+        }
+    }
+
 
     public ResponseEntity<?> addSurvey(Survey survey){
         try{
 
             survey.setCreationDate(java.time.LocalDateTime.now());
-
+            setQuestionsAndChoices(survey);
             surveyRepo.save(survey);
             return ResponseEntity.ok().build();
 
