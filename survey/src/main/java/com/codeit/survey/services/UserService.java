@@ -55,5 +55,8 @@ public class UserService {
 
     }
 
+    public SurveyUser getSurveyUserByUserName(String userName){
+        return userRepo.findByUsername(userName).orElse(null);
+    }
 
 }
