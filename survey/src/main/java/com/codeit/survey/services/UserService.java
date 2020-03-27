@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class UserService {
@@ -57,6 +60,26 @@ public class UserService {
 
     public SurveyUser getSurveyUserByUserName(String userName){
         return userRepo.findByUsername(userName).orElse(null);
+    }
+
+    public List<SurveyUserDTO> getUsers(){
+         return StreamSupport
+                 .stream(userRepo.findAll().spliterator(), false)
+                 .map(this::createDTOFromSurveyUser)
+                 .collect(Collectors.toList());
+    }
+
+    public ResponseEntity<?> deleteUserByUserName(String username){
+        SurveyUser surveyUser = userRepo.findByUsername(username).orElse(null);
+        if (surveyUser == null){
+            return ResponseEntity.badRequest().build();
+        }
+        if (surveyUser.getAuthority().getRole().equals("ROLE_ADMIN")){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        // delete
+        userRepo.delete(surveyUser);
+        return ResponseEntity.ok().build();
     }
 
 }

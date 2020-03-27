@@ -5,9 +5,7 @@ import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -22,4 +20,20 @@ public class UserController {
     public ResponseEntity<?> addUser(@RequestBody SurveyUser surveyUser){
         return userService.addUser(surveyUser);
     }
+
+    @GetMapping("/admin/users")
+    public ResponseEntity<?> getUsers(){
+        return ResponseEntity.ok(userService.getUsers());
+    }
+
+    @GetMapping("admin/user/")
+    public ResponseEntity<?> getUser(@RequestBody SurveyUser surveyUser){
+        return ResponseEntity.ok(userService.getSurveyUserByUserName(surveyUser.getUsername()));
+    }
+
+    @DeleteMapping("admin/user")
+    public ResponseEntity<?> deleteUserByUserName(@RequestBody SurveyUser surveyUser){
+        return userService.deleteUserByUserName(surveyUser.getUsername());
+    }
+
 }

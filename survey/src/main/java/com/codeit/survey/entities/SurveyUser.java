@@ -18,7 +18,9 @@ public class SurveyUser{
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
 
+    @Column(unique = true)
     String username;
+
     String password;
     boolean enabled = true;
     @ManyToOne()
