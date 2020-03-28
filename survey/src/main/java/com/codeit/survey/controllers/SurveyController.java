@@ -7,10 +7,7 @@ import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.services.SurveyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class SurveyController {
@@ -27,8 +24,8 @@ public class SurveyController {
     }
 
     @GetMapping("/getSurveysByUser")
-    public ResponseEntity<?> getSurveysByUser(@RequestBody SurveyUser surveyUser){
-        return surveyService.getSurveysByUser(surveyUser);
+    public ResponseEntity<?> getSurveysByUser(@RequestParam("id") Integer id){
+        return surveyService.getSurveysByUserId(id);
     }
 
 

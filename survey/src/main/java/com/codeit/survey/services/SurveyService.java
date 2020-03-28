@@ -1,7 +1,7 @@
 package com.codeit.survey.services;
 
 import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
-import com.codeit.survey.DTOs.EntityDTOs.SurveysDTO;
+import com.codeit.survey.DTOs.EntitiyListDTOs.SurveysDTO;
 import com.codeit.survey.entities.Choice;
 import com.codeit.survey.entities.Question;
 import com.codeit.survey.entities.Survey;
@@ -11,11 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -75,11 +71,16 @@ public class SurveyService {
 
     public ResponseEntity<?> getSurveysByUser(SurveyUser surveyUser){
         List<Survey> surveys = surveyRepo.findSurveysBySurveyUser(surveyUser);
+        return ResponseEntity.ok(createDTOFromSurveys(surveys));
+    }
 
-        if (surveys != null){
-            return ResponseEntity.ok(createDTOFromSurveys(surveys));
+    public ResponseEntity<?> getSurveysByUserId(Integer userId){
+        SurveyUser surveyUser = userService.getUserById(userId);
+        if(surveyUser == null){
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.badRequest().build();
+        List<Survey> surveys = surveyRepo.findSurveysBySurveyUser(surveyUser);
+        return ResponseEntity.ok(createDTOFromSurveys(surveys));
     }
 
 }
