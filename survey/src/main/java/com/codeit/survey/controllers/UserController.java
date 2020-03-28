@@ -23,12 +23,12 @@ public class UserController {
 
     @GetMapping("/admin/users")
     public ResponseEntity<?> getUsers(){
-        return ResponseEntity.ok(userService.getUsers());
+        return userService.getUsersDTO();
     }
 
-    @GetMapping("admin/user/")
-    public ResponseEntity<?> getUser(@RequestBody SurveyUser surveyUser){
-        return ResponseEntity.ok(userService.getSurveyUserByUserName(surveyUser.getUsername()));
+    @GetMapping("admin/user")
+    public ResponseEntity<?> getUser(@RequestParam("id") Integer id){
+        return userService.getUserDTOById(id);
     }
 
     @DeleteMapping("admin/user")

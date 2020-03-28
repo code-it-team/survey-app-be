@@ -1,5 +1,6 @@
 package com.codeit.survey.services;
 
+import com.codeit.survey.DTOs.EntitiyListDTOs.SurveyUsersDTO;
 import com.codeit.survey.DTOs.EntityDTOs.AuthorityDTO;
 import com.codeit.survey.DTOs.EntityDTOs.SurveyUserDTO;
 import com.codeit.survey.entities.Authority;
@@ -38,6 +39,15 @@ public class UserService {
                 )
         );
     }
+    private SurveyUsersDTO createDTOFromSurveyUsers(List<SurveyUser> surveyUsers){
+        return new SurveyUsersDTO(
+                surveyUsers.
+                        stream().
+                        map(this::createDTOFromSurveyUser).
+                        collect(Collectors.toList())
+        );
+    }
+
 
     public ResponseEntity<?> addUser(SurveyUser surveyUser){
         try{
@@ -62,11 +72,10 @@ public class UserService {
         return userRepo.findByUsername(userName).orElse(null);
     }
 
-    public List<SurveyUserDTO> getUsers(){
-         return StreamSupport
-                 .stream(userRepo.findAll().spliterator(), false)
-                 .map(this::createDTOFromSurveyUser)
-                 .collect(Collectors.toList());
+    public ResponseEntity<?> getUsersDTO(){
+         return ResponseEntity.ok(
+                 createDTOFromSurveyUsers(userRepo.findAll())
+         );
     }
 
     public ResponseEntity<?> deleteUserByUserName(String username){
@@ -82,4 +91,15 @@ public class UserService {
         return ResponseEntity.ok().build();
     }
 
+    public SurveyUser getUserById(Integer id){
+        return userRepo.findById(id).orElse(null);
+    }
+
+    public ResponseEntity<?> getUserDTOById(Integer id){
+        return ResponseEntity.ok(
+                createDTOFromSurveyUser(
+                        getUserById(id)
+                )
+        );
+    }
 }
