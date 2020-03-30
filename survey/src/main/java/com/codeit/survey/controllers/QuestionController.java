@@ -4,9 +4,9 @@ import com.codeit.survey.entities.Question;
 import com.codeit.survey.services.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class QuestionController {
@@ -17,8 +17,20 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @PostMapping("/SurveyAddQuestion")
-    public ResponseEntity<?> addQuestionToSurvey(@RequestBody Question question){
-        return questionService.addQuestionToSurvey(question);
+    @PostMapping("/SurveyAddQuestions")
+    public ResponseEntity<?> addQuestionsToSurvey(@RequestBody List<Question> questions){
+        return questionService.addQuestionsToSurvey(questions);
     }
+
+    @DeleteMapping("/SurveyDeleteQuestions")
+    public ResponseEntity<?> deleteQuestionsFromSurvey(@RequestBody List<Question> questions){
+        return questionService.deleteQuestionsFromSurvey(questions);
+    }
+
+    @PutMapping("/SurveyUpdateQuestions")
+    public ResponseEntity<?> updateSurveyQuestions(@RequestBody List<Question> questions){
+        return questionService.updateSurveyQuestion(questions);
+    }
+
+
 }
