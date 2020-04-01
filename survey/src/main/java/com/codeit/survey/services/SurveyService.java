@@ -74,7 +74,7 @@ public class SurveyService {
         return ResponseEntity.ok(createDTOFromSurveys(surveys));
     }
 
-    public ResponseEntity<?> getSurveysByUserId(Integer userId){
+    public ResponseEntity<?> getSurveysByUserId_response(Integer userId){
         SurveyUser surveyUser = userService.getUserById(userId);
         if(surveyUser == null){
             return ResponseEntity.badRequest().build();
@@ -85,6 +85,12 @@ public class SurveyService {
 
     public Survey findById(Integer id){
         return surveyRepo.findById(id).orElse(null);
+    }
+
+    public List<Survey> getSurveysByUserId(Integer userId){
+        return surveyRepo.findSurveysBySurveyUser(
+                userService.getUserById(userId)
+        );
     }
 
 }

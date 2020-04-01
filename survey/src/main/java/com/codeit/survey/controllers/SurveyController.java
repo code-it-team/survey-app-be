@@ -25,7 +25,7 @@ public class SurveyController {
 
     @GetMapping("/getSurveysByUser")
     public ResponseEntity<?> getSurveysByUser(@RequestParam("id") Integer id){
-        return surveyService.getSurveysByUserId(id);
+        return surveyService.getSurveysByUserId_response(id);
     }
 
 
