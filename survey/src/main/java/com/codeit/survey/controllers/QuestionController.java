@@ -17,19 +17,19 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @PostMapping("/SurveyAddQuestions")
-    public ResponseEntity<?> addQuestionsToSurvey(@RequestBody List<Question> questions){
-        return questionService.addQuestionsToSurvey(questions);
+    @PostMapping("/SurveyAddQuestion")
+    public ResponseEntity<?> addQuestionToSurvey(@RequestBody Question question){
+        return questionService.addQuestionToSurvey(question);
     }
 
-    @DeleteMapping("/SurveyDeleteQuestions")
-    public ResponseEntity<?> deleteQuestionsFromSurvey(@RequestBody List<Question> questions){
-        return questionService.deleteQuestionsFromSurvey(questions);
+    @DeleteMapping("/SurveyDeleteQuestion")
+    public ResponseEntity<?> deleteQuestionsFromSurvey(@RequestParam Integer questionId){
+        return questionService.deleteQuestionsFromSurvey(questionId);
     }
 
-    @PutMapping("/SurveyUpdateQuestions")
-    public ResponseEntity<?> updateSurveyQuestions(@RequestBody List<Question> questions){
-        return questionService.updateSurveyQuestion(questions);
+    @PutMapping("/SurveyUpdateQuestion")
+    public ResponseEntity<?> updateSurveyQuestions(@RequestBody Question question){
+        return questionService.updateSurveyQuestion(question);
     }
 
 

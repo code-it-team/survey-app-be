@@ -83,6 +83,9 @@ public class SurveyService {
         return ResponseEntity.ok(createDTOFromSurveys(surveys));
     }
 
+    /**
+     * @return null if Survey doesn't exist
+     * */
     public Survey findById(Integer id){
         return surveyRepo.findById(id).orElse(null);
     }

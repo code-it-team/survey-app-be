@@ -45,41 +45,34 @@ public class QuestionService {
         this.userService = userService;
     }
 
-    private void setSurvey(List<Question> questions){
-        for (Question question : questions){
-            Survey survey = surveyService.findById(question.getSurvey().getId());
-            // set the survey question relationship
-            survey.getQuestions().add(question);
-            question.setSurvey(survey);
-        }
+    private void setSurvey(Question question){
+        Survey survey = surveyService.findById(question.getSurvey().getId());
+        // set the survey question relationship
+        survey.getQuestions().add(question);
+        question.setSurvey(survey);
     }
 
-    private void setChoices(List<Question> questions){
-        for (Question question : questions){
-            for (Choice choice : question.getChoices()){
-                choice.setQuestion(question);
-            }
+    private void setChoices(Question question){
+        for (Choice choice : question.getChoices()){
+            choice.setQuestion(question);
         }
     }
-
     /**
-     * questions in newQuestions list must have their ID set
+     * question must have its ID set
      * */
-    private void updateQuestions(List<Question> newQuestions){
-        for (Question newQuestion : newQuestions){
-            Question question = questionRepo.findById(newQuestion.getId()).orElseThrow(RuntimeException::new);
-            if(newQuestion.getBody() != null){
-                question.setBody(newQuestion.getBody());
-            }
-            questionRepo.save(question);
+    private void updateQuestion(Question newQuestion){
+        Question question = questionRepo.findById(newQuestion.getId()).orElseThrow(RuntimeException::new);
+        if(newQuestion.getBody() != null){
+            question.setBody(newQuestion.getBody());
         }
+        questionRepo.save(question);
     }
 
 
     /**
-     * @return true if all the questions belong to surveys of the user
+     * @return true if the question belong to surveys of the user
      */
-    private boolean isUserSurvey(List<Question> questions, Authentication auth){
+    private boolean notUserSurvey(Integer surveyId, Authentication auth){
         SurveyUser surveyUser = userService.getSurveyUserByUserName
                 (
                     ((CustomUserDetails)auth.getPrincipal()).
@@ -92,39 +85,36 @@ public class QuestionService {
                         map(Survey::getId).
                         collect(Collectors.toList());
 
-        List<Question> questionsNotOfUser =  questions.
-                stream()
-                .filter(question -> !userSurveysIds.contains(question.getSurvey().getId()))
-                .collect(Collectors.toList());
+        Survey survey = surveyService.findById(surveyId);
 
-        return questionsNotOfUser.size() == 0;
+        return survey == null || !userSurveysIds.contains(survey.getId());
     }
 
     // admin methods
-    public ResponseEntity<?> addQuestionsToSurvey_admin(List<Question> questions){
+    public ResponseEntity<?> addQuestionToSurvey_admin(Question question){
         try{
-            setSurvey(questions);
-            setChoices(questions);
+            setSurvey(question);
+            setChoices(question);
 
-            questionRepo.saveAll(questions);
+            questionRepo.save(question);
             return ResponseEntity.ok().build();
         }catch (Exception e){
             return ResponseEntity.badRequest().build();
         }
     }
 
-    public ResponseEntity<?> deleteQuestionsFromSurvey_admin(List<Question> questions){
+    public ResponseEntity<?> deleteQuestionFromSurvey_admin(Integer questionId){
         try {
-            questionRepo.deleteAll(questions);
+            questionRepo.deleteById(questionId);
             return ResponseEntity.ok().build();
         }catch (Exception e){
             return ResponseEntity.badRequest().build();
         }
     }
 
-    public ResponseEntity<?> updateSurveyQuestion_admin(List<Question> questions){
+    public ResponseEntity<?> updateSurveyQuestion_admin(Question question){
         try {
-            updateQuestions(questions);
+            updateQuestion(question);
             return ResponseEntity.ok().build();
         }catch (Exception e){
             return ResponseEntity.badRequest().build();
@@ -133,29 +123,35 @@ public class QuestionService {
 
 
     // user methods
-    public ResponseEntity<?> addQuestionsToSurvey(List<Question> questions){
+    public ResponseEntity<?> addQuestionToSurvey(Question question){
         // do the surveys of the questions belong to the user
-        if (! isUserSurvey(questions, SecurityContextHolder.getContext().getAuthentication())){
+        if ( notUserSurvey(question.getSurvey().getId(), SecurityContextHolder.getContext().getAuthentication()))
+        {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+
         // if the user has proven that he owns all the questions, he can add as an admin
-        return addQuestionsToSurvey_admin(questions);
+        return addQuestionToSurvey_admin(question);
     }
 
-    public ResponseEntity<?> deleteQuestionsFromSurvey(List<Question> questions){
+    public ResponseEntity<?> deleteQuestionsFromSurvey(Integer questionId){
+        Question question = questionRepo.findById(questionId).orElse(null);
+        if (question == null){
+            return ResponseEntity.badRequest().build();
+        }
         // do the surveys of the questions belong to the user
-        if (! isUserSurvey(questions, SecurityContextHolder.getContext().getAuthentication())){
+        if (notUserSurvey(question.getSurvey().getId(), SecurityContextHolder.getContext().getAuthentication())){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return deleteQuestionsFromSurvey_admin(questions);
+        return deleteQuestionFromSurvey_admin(questionId);
     }
 
-    public ResponseEntity<?> updateSurveyQuestion(List<Question> questions){
+    public ResponseEntity<?> updateSurveyQuestion(Question question){
         // do the surveys of the questions belong to the user
-        if (! isUserSurvey(questions, SecurityContextHolder.getContext().getAuthentication())){
+        if (notUserSurvey(question.getSurvey().getId(), SecurityContextHolder.getContext().getAuthentication())){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        return updateSurveyQuestion_admin(questions);
+        return updateSurveyQuestion_admin(question);
     }
 
 }

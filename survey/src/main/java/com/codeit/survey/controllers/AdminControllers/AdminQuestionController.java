@@ -18,19 +18,19 @@ public class AdminQuestionController {
         this.questionService = questionService;
     }
 
-    @PostMapping("admin/SurveyAddQuestions")
-    public ResponseEntity<?> addQuestionsToSurvey(@RequestBody List<Question> questions){
-        return questionService.addQuestionsToSurvey_admin(questions);
+    @PostMapping("admin/SurveyAddQuestion")
+    public ResponseEntity<?> addQuestionsToSurvey(@RequestBody Question question){
+        return questionService.addQuestionToSurvey_admin(question);
     }
 
-    @DeleteMapping("admin/SurveyDeleteQuestions")
-    public ResponseEntity<?> deleteQuestionsFromSurvey(@RequestBody List<Question> questions){
-        return questionService.deleteQuestionsFromSurvey_admin(questions);
+    @DeleteMapping("admin/SurveyDeleteQuestion")
+    public ResponseEntity<?> deleteQuestionsFromSurvey(@RequestParam Integer questionId){
+        return questionService.deleteQuestionFromSurvey_admin(questionId);
     }
 
-    @PutMapping("admin/SurveyUpdateQuestions")
-    public ResponseEntity<?> updateSurveyQuestions(@RequestBody List<Question> questions){
-        return questionService.updateSurveyQuestion_admin(questions);
+    @PutMapping("admin/SurveyUpdateQuestion")
+    public ResponseEntity<?> updateSurveyQuestions(@RequestBody Question question){
+        return questionService.updateSurveyQuestion_admin(question);
     }
 
 
