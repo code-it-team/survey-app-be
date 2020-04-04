@@ -30,6 +30,11 @@ public class SurveyController {
         return surveyService.deleteSurveyById(surveyId);
     }
 
+    @PutMapping("/updateSurvey")
+    public ResponseEntity<?> updateSurvey(@RequestBody Survey survey){
+        return surveyService.updateSurvey(survey);
+    }
+
 
 
 }

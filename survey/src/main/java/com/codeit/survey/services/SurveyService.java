@@ -58,6 +58,16 @@ public class SurveyService {
         }
     }
 
+    private boolean notUserSurvey(Integer survey_id, Authentication auth){
+        SurveyUser surveyUser = userService.getSurveyUserByUserName
+                (
+                        ((CustomUserDetails)auth.getPrincipal()).
+                                getUsername()
+                );
+        Survey survey = surveyRepo.findById(survey_id).orElse(null);
+
+        return survey == null || survey.getSurveyUser() != surveyUser;
+    }
 
     public ResponseEntity<?> addSurvey(Survey survey){
         try{
@@ -103,6 +113,20 @@ public class SurveyService {
         return ResponseEntity.ok().build();
     }
 
+    public ResponseEntity<?> updateSurvey_admin(Survey newSurvey){
+        Survey survey = surveyRepo.findById(newSurvey.getId()).orElse(null);
+        if (survey == null){
+            return ResponseEntity.badRequest().build();
+        }
+        // update the survey
+        survey.setName(newSurvey.getName());
+
+        surveyRepo.save(survey);
+
+        return ResponseEntity.ok().build();
+    }
+
+
     public ResponseEntity<?> deleteSurveyById(Integer surveyId){
         if (notUserSurvey(surveyId, SecurityContextHolder.getContext().getAuthentication())){
             return ResponseEntity.badRequest().build();
@@ -110,15 +134,11 @@ public class SurveyService {
         return deleteSurveyById_admin(surveyId);
     }
 
-    private boolean notUserSurvey(Integer survey_id, Authentication auth){
-        SurveyUser surveyUser = userService.getSurveyUserByUserName
-                (
-                        ((CustomUserDetails)auth.getPrincipal()).
-                                getUsername()
-                );
-        Survey survey = surveyRepo.findById(survey_id).orElse(null);
-
-        return survey == null || survey.getSurveyUser() != surveyUser;
+    public ResponseEntity<?> updateSurvey(Survey newSurvey){
+        if (notUserSurvey(newSurvey.getId(), SecurityContextHolder.getContext().getAuthentication())){
+            return ResponseEntity.badRequest().build();
+        }
+        return updateSurvey_admin(newSurvey);
     }
 
 
