@@ -1,9 +1,6 @@
 package com.codeit.survey.controllers;
 
-import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
-import com.codeit.survey.DTOs.EntityDTOs.SurveyUserDTO;
 import com.codeit.survey.entities.Survey;
-import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.services.SurveyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +23,11 @@ public class SurveyController {
     @GetMapping("/getSurveysByUser")
     public ResponseEntity<?> getSurveysByUser(@RequestParam("id") Integer id){
         return surveyService.getSurveysByUserId_response(id);
+    }
+
+    @DeleteMapping("/deleteSurvey")
+    public ResponseEntity<?> deleteSurveyById(@RequestParam Integer surveyId){
+        return surveyService.deleteSurveyById(surveyId);
     }
 
 

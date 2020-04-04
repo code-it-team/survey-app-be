@@ -7,8 +7,11 @@ import com.codeit.survey.entities.Question;
 import com.codeit.survey.entities.Survey;
 import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.repositories.SurveyRepo;
+import com.codeit.survey.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -69,11 +72,6 @@ public class SurveyService {
         }
     }
 
-    public ResponseEntity<?> getSurveysByUser(SurveyUser surveyUser){
-        List<Survey> surveys = surveyRepo.findSurveysBySurveyUser(surveyUser);
-        return ResponseEntity.ok(createDTOFromSurveys(surveys));
-    }
-
     public ResponseEntity<?> getSurveysByUserId_response(Integer userId){
         SurveyUser surveyUser = userService.getUserById(userId);
         if(surveyUser == null){
@@ -95,5 +93,33 @@ public class SurveyService {
                 userService.getUserById(userId)
         );
     }
+
+    public ResponseEntity<?> deleteSurveyById_admin(Integer surveyId){
+        Survey survey = surveyRepo.findById(surveyId).orElse(null);
+        if (survey == null){
+            return ResponseEntity.badRequest().build();
+        }
+        surveyRepo.delete(survey);
+        return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<?> deleteSurveyById(Integer surveyId){
+        if (notUserSurvey(surveyId, SecurityContextHolder.getContext().getAuthentication())){
+            return ResponseEntity.badRequest().build();
+        }
+        return deleteSurveyById_admin(surveyId);
+    }
+
+    private boolean notUserSurvey(Integer survey_id, Authentication auth){
+        SurveyUser surveyUser = userService.getSurveyUserByUserName
+                (
+                        ((CustomUserDetails)auth.getPrincipal()).
+                                getUsername()
+                );
+        Survey survey = surveyRepo.findById(survey_id).orElse(null);
+
+        return survey == null || survey.getSurveyUser() != surveyUser;
+    }
+
 
 }
