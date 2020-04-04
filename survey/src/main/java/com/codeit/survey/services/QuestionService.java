@@ -24,7 +24,7 @@ public class QuestionService {
     private QuestionRepo questionRepo;
     private ChoiceService choiceService;
     private SurveyService surveyService;
-    private UserService userService;
+    private VerificationService verificationService;
 
     public List<QuestionDTO> createDTOsFromQuestions(List<Question> questions){
         return questions
@@ -38,11 +38,11 @@ public class QuestionService {
 
     @Autowired
     @Lazy
-    public QuestionService(QuestionRepo questionRepo, ChoiceService choiceService, SurveyService surveyService, UserService userService){
+    public QuestionService(QuestionRepo questionRepo, ChoiceService choiceService, SurveyService surveyService, VerificationService verificationService){
         this.questionRepo = questionRepo;
         this.choiceService = choiceService;
         this.surveyService = surveyService;
-        this.userService = userService;
+        this.verificationService = verificationService;
     }
 
     private void setSurvey(Question question){
@@ -68,27 +68,6 @@ public class QuestionService {
         questionRepo.save(question);
     }
 
-
-    /**
-     * @return true if the question belong to surveys of the user
-     */
-    private boolean notUserSurvey(Integer surveyId, Authentication auth){
-        SurveyUser surveyUser = userService.getSurveyUserByUserName
-                (
-                    ((CustomUserDetails)auth.getPrincipal()).
-                    getUsername()
-                );
-        List<Integer> userSurveysIds =
-                surveyService.
-                        getSurveysByUserId(surveyUser.getId()).
-                        stream().
-                        map(Survey::getId).
-                        collect(Collectors.toList());
-
-        Survey survey = surveyService.findById(surveyId);
-
-        return survey == null || !userSurveysIds.contains(survey.getId());
-    }
 
     // admin methods
     public ResponseEntity<?> addQuestionToSurvey_admin(Question question){
@@ -125,7 +104,7 @@ public class QuestionService {
     // user methods
     public ResponseEntity<?> addQuestionToSurvey(Question question){
         // do the surveys of the questions belong to the user
-        if ( notUserSurvey(question.getSurvey().getId(), SecurityContextHolder.getContext().getAuthentication()))
+        if ( verificationService.notUserSurvey(question.getSurvey().getId()))
         {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -140,7 +119,7 @@ public class QuestionService {
             return ResponseEntity.badRequest().build();
         }
         // do the surveys of the questions belong to the user
-        if (notUserSurvey(question.getSurvey().getId(), SecurityContextHolder.getContext().getAuthentication())){
+        if (verificationService.notUserSurvey(question.getSurvey().getId())){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return deleteQuestionFromSurvey_admin(questionId);
@@ -148,7 +127,7 @@ public class QuestionService {
 
     public ResponseEntity<?> updateSurveyQuestion(Question question){
         // do the surveys of the questions belong to the user
-        if (notUserSurvey(question.getSurvey().getId(), SecurityContextHolder.getContext().getAuthentication())){
+        if (verificationService.notUserSurvey(question.getSurvey().getId())){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return updateSurveyQuestion_admin(question);

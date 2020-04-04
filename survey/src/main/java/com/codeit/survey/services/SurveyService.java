@@ -22,13 +22,15 @@ public class SurveyService {
     private SurveyRepo surveyRepo;
     private UserService userService;
     private QuestionService questionService;
+    private VerificationService verificationService;
 
 
     @Autowired
-    public SurveyService(SurveyRepo surveyRepo, UserService userService, QuestionService questionService){
+    public SurveyService(SurveyRepo surveyRepo, UserService userService, QuestionService questionService, VerificationService verificationService){
         this.surveyRepo = surveyRepo;
         this.userService = userService;
         this.questionService = questionService;
+        this.verificationService = verificationService;
     }
 
     private SurveysDTO createDTOFromSurveys(List<Survey> surveys){
@@ -56,17 +58,6 @@ public class SurveyService {
                 choice.setQuestion(question);
             }
         }
-    }
-
-    private boolean notUserSurvey(Integer survey_id, Authentication auth){
-        SurveyUser surveyUser = userService.getSurveyUserByUserName
-                (
-                        ((CustomUserDetails)auth.getPrincipal()).
-                                getUsername()
-                );
-        Survey survey = surveyRepo.findById(survey_id).orElse(null);
-
-        return survey == null || survey.getSurveyUser() != surveyUser;
     }
 
     public ResponseEntity<?> addSurvey(Survey survey){
@@ -128,14 +119,14 @@ public class SurveyService {
 
 
     public ResponseEntity<?> deleteSurveyById(Integer surveyId){
-        if (notUserSurvey(surveyId, SecurityContextHolder.getContext().getAuthentication())){
+        if (verificationService.notUserSurvey(surveyId)){
             return ResponseEntity.badRequest().build();
         }
         return deleteSurveyById_admin(surveyId);
     }
 
     public ResponseEntity<?> updateSurvey(Survey newSurvey){
-        if (notUserSurvey(newSurvey.getId(), SecurityContextHolder.getContext().getAuthentication())){
+        if (verificationService.notUserSurvey(newSurvey.getId())){
             return ResponseEntity.badRequest().build();
         }
         return updateSurvey_admin(newSurvey);
