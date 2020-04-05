@@ -58,6 +58,18 @@ public class ChoiceService {
         return ResponseEntity.ok().build();
     }
 
+    public ResponseEntity<?> updateChoice_admin(Choice newChoice){
+        Choice choice = choiceRepo.findById(newChoice.getId()).orElse(null);
+        if (choice == null) return ResponseEntity.badRequest().build();
+
+        // update the choice
+        choice.setBody(newChoice.getBody());
+        choiceRepo.save(choice);
+
+        return ResponseEntity.ok().build();
+    }
+
+
     public ResponseEntity<?> addChoice(Choice choice){
         if(verificationService.notUserSurvey(choice.getQuestion().getSurvey().getId())) return ResponseEntity.badRequest().build();
         return addChoice_admin(choice);
@@ -72,5 +84,12 @@ public class ChoiceService {
         }
         return deleteChoice_admin(choiceId);
     }
+
+    public ResponseEntity<?> updateChoice(Choice newChoice){
+        Integer surveyId = newChoice.getQuestion().getSurvey().getId();
+        if (verificationService.notUserSurvey(surveyId)) return ResponseEntity.badRequest().build();
+        return updateChoice_admin(newChoice);
+    }
+
 
 }

@@ -25,4 +25,9 @@ public class AdminChoiceController {
         return choiceService.deleteChoice_admin(choiceId);
     }
 
+    @PutMapping("/admin/updateChoice")
+    public ResponseEntity<?> updateChoice(@RequestBody Choice choice){
+        return choiceService.updateChoice_admin(choice);
+    }
+
 }

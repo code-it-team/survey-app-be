@@ -24,4 +24,9 @@ public class ChoiceController {
     public ResponseEntity<?> deleteChoice(@RequestParam Integer choiceId){
         return choiceService.deleteChoice(choiceId);
     }
+
+    @PutMapping("/updateChoice")
+    public ResponseEntity<?> updateChoice(@RequestBody Choice choice){
+        return choiceService.updateChoice(choice);
+    }
 }
