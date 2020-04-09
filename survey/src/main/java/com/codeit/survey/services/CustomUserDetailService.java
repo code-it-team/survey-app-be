@@ -23,7 +23,7 @@ public class CustomUserDetailService implements UserDetailsService {
         if (user != null) {
             return new CustomUserDetails(user);
         }else{
-            throw new BadCredentialsException(String.format("Username or password are incorrect"));
+            throw new BadCredentialsException("Username or password are incorrect");
         }
 
     }
