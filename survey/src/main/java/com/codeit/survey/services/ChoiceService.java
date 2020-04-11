@@ -57,7 +57,8 @@ public class ChoiceService {
     }
 
     public ResponseEntity<?> addChoice(Choice choice){
-        if(verificationService.notUserSurvey(choice.getQuestion().getSurvey().getId())) return ResponseEntity.badRequest().build();
+        Integer surveyId = choice.getQuestion().getSurvey().getId();
+        if(verificationService.notUserSurvey(surveyId)) return ResponseEntity.badRequest().build();
         return addChoice_admin(choice);
     }
 

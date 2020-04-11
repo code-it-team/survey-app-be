@@ -8,6 +8,7 @@ import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.repositories.QuestionRepo;
 import com.codeit.survey.security.CustomUserDetails;
 import org.apache.catalina.User;
+import org.hibernate.proxy.EntityNotFoundDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +48,8 @@ public class QuestionService {
     }
 
     private void setSurvey(Question question){
-        Survey survey = surveyService.findById(question.getSurvey().getId());
+        Integer SurveyId = question.getSurvey().getId();
+        Survey survey = surveyService.findById(SurveyId);
         // set the survey question relationship
         survey.getQuestions().add(question);
         question.setSurvey(survey);
@@ -57,11 +60,10 @@ public class QuestionService {
             choice.setQuestion(question);
         }
     }
-    /**
-     * question must have its ID set
-     * */
-    private void updateQuestion(Question newQuestion){
-        Question question = questionRepo.findById(newQuestion.getId()).orElseThrow(RuntimeException::new);
+
+    private void  updateQuestion(Question newQuestion){
+        Integer newQuestionId = newQuestion.getId();
+        Question question = questionRepo.findById(newQuestionId).orElseThrow(EntityNotFoundException::new);
         if(newQuestion.getBody() != null){
             question.setBody(newQuestion.getBody());
         }

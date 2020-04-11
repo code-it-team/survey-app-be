@@ -19,7 +19,7 @@ class ChoiceServiceTest {
     private ChoiceService choiceService;
 
     @Test
-     void createDTOsFromChoicesTest_createTwoDTOs(){
+     void givenTwoChoices_TwoChoiceDTOsAreCreatedSuccessfully(){
         Choice choice1 = new Choice(1, "Test body", null);
         Choice choice2 = new Choice(2, "Test body2", null);
         List<Choice> choices = Arrays.asList(choice1, choice2);
