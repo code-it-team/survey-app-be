@@ -109,7 +109,6 @@ public class SurveyService {
         if (survey == null){
             return ResponseEntity.badRequest().build();
         }
-        // update the survey
         survey.setName(newSurvey.getName());
 
         surveyRepo.save(survey);
