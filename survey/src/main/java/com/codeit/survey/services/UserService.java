@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -32,7 +33,7 @@ public class UserService {
         return new SurveyUserDTO(
                 surveyUser.getId(),
                 surveyUser.getUsername(),
-                Arrays.asList(
+                Collections.singletonList(
                         new AuthorityDTO(
                                 surveyUser.getAuthority().getId(),
                                 surveyUser.getAuthority().getRole())
@@ -57,11 +58,8 @@ public class UserService {
             }
             Authority authority = authorityRepo.findAuthorityByRole(surveyUser.getAuthority().getRole());
             surveyUser.setAuthority(authority);
-            return ResponseEntity.ok( // return an OK
-                    createDTOFromSurveyUser( // create a DTO for it
-                            userRepo.save(surveyUser) // save the new user
-                    )
-            );
+            SurveyUserDTO dtoFromSurveyUser = createDTOFromSurveyUser(userRepo.save(surveyUser));
+            return ResponseEntity.ok(dtoFromSurveyUser);
         }catch (Exception e){
             return ResponseEntity.badRequest().build();
         }
