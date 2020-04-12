@@ -90,9 +90,8 @@ public class SurveyService {
     }
 
     public List<Survey> getSurveysByUserId(Integer userId){
-        return surveyRepo.findSurveysBySurveyUser(
-                userService.getUserById(userId)
-        );
+        SurveyUser surveyUser = userService.getUserById(userId);
+        return surveyRepo.findSurveysBySurveyUser(surveyUser);
     }
 
     public ResponseEntity<?> deleteSurveyById_admin(Integer surveyId){

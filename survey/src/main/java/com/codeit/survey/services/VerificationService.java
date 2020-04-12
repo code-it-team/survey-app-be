@@ -25,26 +25,30 @@ public class VerificationService {
     }
 
     /**
-     * @return true if the survey belong to surveys of the user
+     * @return true if the survey doesn't exist or doesn't belong to surveys of the user
      */
     public boolean notUserSurvey(Integer surveyId){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        SurveyUser surveyUser = userService.getSurveyUserByUserName
-                (
-                        ((CustomUserDetails)auth.getPrincipal()).
-                                getUsername()
-                );
+        SurveyUser surveyUser = getAuthenticatedSurveyUser();
         if (surveyUser == null) return false;
 
-        List<Integer> userSurveysIds =
-                surveyService.
-                        getSurveysByUserId(surveyUser.getId()).
-                        stream().
-                        map(Survey::getId).
-                        collect(Collectors.toList());
+        List<Integer> userSurveysIds = getUsersSurveysIds(surveyUser);
 
         Survey survey = surveyService.findById(surveyId);
 
         return survey == null || !userSurveysIds.contains(survey.getId());
+    }
+
+    public List<Integer> getUsersSurveysIds(SurveyUser surveyUser) {
+        List<Survey> UsersSurveys = surveyService.getSurveysByUserId(surveyUser.getId());
+        return UsersSurveys.
+                stream().
+                map(Survey::getId).
+                collect(Collectors.toList());
+    }
+
+    public SurveyUser getAuthenticatedSurveyUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((CustomUserDetails) auth.getPrincipal()).getUsername();
+        return userService.getSurveyUserByUserName(username);
     }
 }
