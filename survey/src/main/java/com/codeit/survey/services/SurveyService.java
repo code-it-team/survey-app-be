@@ -124,7 +124,8 @@ public class SurveyService {
     }
 
     public ResponseEntity<?> updateSurvey(Survey newSurvey){
-        if (verificationService.notUserSurvey(newSurvey.getId())){
+        Integer newSurveyId = newSurvey.getId();
+        if (verificationService.notUserSurvey(newSurveyId)){
             return ResponseEntity.badRequest().build();
         }
         return updateSurvey_admin(newSurvey);

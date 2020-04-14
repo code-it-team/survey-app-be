@@ -65,8 +65,8 @@ public class ChoiceService {
     public ResponseEntity<?> deleteChoice(Integer choiceId){
         Choice choice = choiceRepo.findById(choiceId).orElse(null);
         if (choice == null) return ResponseEntity.badRequest().build();
-        if (verificationService.notUserSurvey(
-        choice.getQuestion().getSurvey().getId())){
+        Integer surveyId = choice.getQuestion().getSurvey().getId();
+        if (verificationService.notUserSurvey(surveyId)){
             return ResponseEntity.badRequest().build();
         }
         return deleteChoice_admin(choiceId);

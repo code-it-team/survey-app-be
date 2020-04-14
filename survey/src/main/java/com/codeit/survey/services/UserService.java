@@ -94,10 +94,7 @@ public class UserService {
     }
 
     public ResponseEntity<?> getUserDTOById(Integer id){
-        return ResponseEntity.ok(
-                createDTOFromSurveyUser(
-                        getUserById(id)
-                )
-        );
+        SurveyUser userById = getUserById(id);
+        return ResponseEntity.ok(createDTOFromSurveyUser(userById));
     }
 }

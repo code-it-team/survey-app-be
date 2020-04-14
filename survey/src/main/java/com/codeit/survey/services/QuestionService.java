@@ -106,7 +106,8 @@ public class QuestionService {
     // user methods
     public ResponseEntity<?> addQuestionToSurvey(Question question){
         // do the surveys of the questions belong to the user
-        if ( verificationService.notUserSurvey(question.getSurvey().getId()))
+        Integer surveyId = question.getSurvey().getId();
+        if ( verificationService.notUserSurvey(surveyId))
         {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -121,7 +122,8 @@ public class QuestionService {
             return ResponseEntity.badRequest().build();
         }
         // do the surveys of the questions belong to the user
-        if (verificationService.notUserSurvey(question.getSurvey().getId())){
+        Integer surveyId = question.getSurvey().getId();
+        if (verificationService.notUserSurvey(surveyId)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return deleteQuestionFromSurvey_admin(questionId);
@@ -129,7 +131,8 @@ public class QuestionService {
 
     public ResponseEntity<?> updateSurveyQuestion(Question question){
         // do the surveys of the questions belong to the user
-        if (verificationService.notUserSurvey(question.getSurvey().getId())){
+        Integer surveyId = question.getSurvey().getId();
+        if (verificationService.notUserSurvey(surveyId)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return updateSurveyQuestion_admin(question);
