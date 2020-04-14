@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-@Profile("prod")
+@Profile("dev")
 public class AdminSeeder implements CommandLineRunner {
     UserRepo userRepo;
     AuthorityRepo authorityRepo;
