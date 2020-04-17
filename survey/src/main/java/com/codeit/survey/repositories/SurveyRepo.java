@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface SurveyRepo extends CrudRepository<Survey, Integer> {
     List<Survey> findSurveysBySurveyUser(SurveyUser surveyUser);
+    boolean existsByName(String name);
 
 }

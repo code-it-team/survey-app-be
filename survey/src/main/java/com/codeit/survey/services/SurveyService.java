@@ -7,11 +7,9 @@ import com.codeit.survey.entities.Question;
 import com.codeit.survey.entities.Survey;
 import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.repositories.SurveyRepo;
-import com.codeit.survey.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -60,17 +58,22 @@ public class SurveyService {
         }
     }
 
-    public ResponseEntity<?> addSurvey(Survey survey){
-        try{
-
-            survey.setCreationDate(java.time.LocalDateTime.now());
-            setQuestionsAndChoices(survey);
-            surveyRepo.save(survey);
-            return ResponseEntity.ok().build();
-
-        }catch (Exception e){
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> checkAndAddSurvey(Survey survey){
+        if (surveyNameNotUnique(survey)){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
+        return addSurvey(survey);
+    }
+
+    private ResponseEntity<?> addSurvey(Survey survey) {
+        survey.setCreationDate(java.time.LocalDateTime.now());
+        setQuestionsAndChoices(survey);
+        surveyRepo.save(survey);
+        return ResponseEntity.ok().build();
+    }
+
+    private boolean surveyNameNotUnique(Survey survey) {
+        return surveyRepo.existsByName(survey.getName());
     }
 
     public ResponseEntity<?> getSurveysByUserId_response(Integer userId){

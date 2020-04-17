@@ -53,7 +53,7 @@ class SurveyServiceTest {
 
         doReturn(survey).when(surveyRepoMock).save(survey);
 
-        ResponseEntity responseEntity = surveyService.addSurvey(survey);
+        ResponseEntity responseEntity = surveyService.checkAndAddSurvey(survey);
 
         assertEquals("TEST QUESTION 1", choice1.getQuestion().getBody());
         assertEquals("TEST QUESTION 1", choice2.getQuestion().getBody());
@@ -61,6 +61,14 @@ class SurveyServiceTest {
         assertEquals("TEST NAME", question.getSurvey().getName());
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    void givenASurveyComingWithRequestFromClient_DetectTheConflictingSurveyName(){
+        Survey survey = new Survey(1, null, null, "TEST NAME", null);
+        doReturn(true).when(surveyRepoMock).existsByName("TEST NAME");
+        ResponseEntity responseEntity = surveyService.checkAndAddSurvey(survey);
+        assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
     }
 
     @Test

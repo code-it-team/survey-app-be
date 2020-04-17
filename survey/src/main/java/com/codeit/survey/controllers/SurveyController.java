@@ -17,7 +17,7 @@ public class SurveyController {
 
     @PostMapping("/addSurvey")
     public ResponseEntity<?> addSurvey(@RequestBody Survey survey){
-        return surveyService.addSurvey(survey);
+        return surveyService.checkAndAddSurvey(survey);
     }
 
     @GetMapping("/getSurveysByUser")
