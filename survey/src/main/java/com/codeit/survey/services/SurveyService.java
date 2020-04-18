@@ -58,13 +58,6 @@ public class SurveyService {
         }
     }
 
-    public ResponseEntity<?> checkAndAddSurvey(Survey survey){
-        if (surveyNameNotUnique(survey)){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-        return addSurvey(survey);
-    }
-
     private ResponseEntity<?> addSurvey(Survey survey) {
         survey.setCreationDate(java.time.LocalDateTime.now());
         setQuestionsAndChoices(survey);
@@ -74,6 +67,20 @@ public class SurveyService {
 
     private boolean surveyNameNotUnique(Survey survey) {
         return surveyRepo.existsByName(survey.getName());
+    }
+
+    private ResponseEntity<?> checkAndUpdateSurvey(Survey newSurvey, Survey survey) {
+        survey.setName(newSurvey.getName());
+        surveyRepo.save(survey);
+        return ResponseEntity.ok().build();
+    }
+
+
+    public ResponseEntity<?> checkAndAddSurvey(Survey survey){
+        if (surveyNameNotUnique(survey)){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+        return addSurvey(survey);
     }
 
     public ResponseEntity<?> getSurveysByUserId_response(Integer userId){
@@ -117,10 +124,31 @@ public class SurveyService {
         return checkAndUpdateSurvey(newSurvey, survey);
     }
 
-    private ResponseEntity<?> checkAndUpdateSurvey(Survey newSurvey, Survey survey) {
-        survey.setName(newSurvey.getName());
-        surveyRepo.save(survey);
+
+    public ResponseEntity<?> checkAndPublishSurvey_admin(Integer surveyId){
+        Survey surveyFromDB = findById(surveyId);
+        if(surveyFromDB == null){
+            return ResponseEntity.badRequest().body("No such Survey");
+        }
+
+        if(surveyFromDB.isPublished()){
+            return ResponseEntity.badRequest().body("Survey already published");
+        }
+
+        return publishSurvey(surveyFromDB);
+    }
+
+    private ResponseEntity<?> publishSurvey(Survey surveyFromDB) {
+        surveyFromDB.setPublished(true);
+        surveyRepo.save(surveyFromDB);
         return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<?> checkAndPublishSurvey(Integer surveyId){
+        if(verificationService.notUserSurvey(surveyId)){
+            return ResponseEntity.badRequest().build();
+        }
+        return checkAndPublishSurvey_admin(surveyId);
     }
 
 

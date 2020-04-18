@@ -26,6 +26,11 @@ public class AdminSurveyController {
         return surveyService.checkAndUpdateSurvey_admin(survey);
     }
 
+    @PutMapping("/admin/publishSurvey")
+    public ResponseEntity<?> publishSurvey(@RequestParam Integer surveyId){
+        return surveyService.checkAndPublishSurvey_admin(surveyId);
+    }
+
 
 
 

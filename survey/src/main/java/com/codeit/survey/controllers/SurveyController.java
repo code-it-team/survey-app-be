@@ -35,6 +35,11 @@ public class SurveyController {
         return surveyService.checkAndUpdateSurvey(survey);
     }
 
+    @PutMapping("/publishSurvey")
+    public ResponseEntity<?> publishSurvey(@RequestParam Integer surveyId){
+        return surveyService.checkAndPublishSurvey(surveyId);
+    }
+
 
 
 }
