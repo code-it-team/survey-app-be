@@ -19,6 +19,9 @@ public class Survey {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(nullable = false)
+    private boolean published = false;
+
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false)
     private SurveyUser surveyUser;

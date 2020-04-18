@@ -32,7 +32,7 @@ public class SurveyController {
 
     @PutMapping("/updateSurvey")
     public ResponseEntity<?> updateSurvey(@RequestBody Survey survey){
-        return surveyService.updateSurvey(survey);
+        return surveyService.checkAndUpdateSurvey(survey);
     }
 
 

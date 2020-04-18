@@ -106,15 +106,20 @@ public class SurveyService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<?> updateSurvey_admin(Survey newSurvey){
+    public ResponseEntity<?> checkAndUpdateSurvey_admin(Survey newSurvey){
         Survey survey = surveyRepo.findById(newSurvey.getId()).orElse(null);
         if (survey == null){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Survey doesn't exist");
         }
+        if(survey.isPublished()){
+            return ResponseEntity.badRequest().body("Survey can't be updated because it's published");
+        }
+        return checkAndUpdateSurvey(newSurvey, survey);
+    }
+
+    private ResponseEntity<?> checkAndUpdateSurvey(Survey newSurvey, Survey survey) {
         survey.setName(newSurvey.getName());
-
         surveyRepo.save(survey);
-
         return ResponseEntity.ok().build();
     }
 
@@ -126,12 +131,12 @@ public class SurveyService {
         return deleteSurveyById_admin(surveyId);
     }
 
-    public ResponseEntity<?> updateSurvey(Survey newSurvey){
+    public ResponseEntity<?> checkAndUpdateSurvey(Survey newSurvey){
         Integer newSurveyId = newSurvey.getId();
         if (verificationService.notUserSurvey(newSurveyId)){
             return ResponseEntity.badRequest().build();
         }
-        return updateSurvey_admin(newSurvey);
+        return checkAndUpdateSurvey_admin(newSurvey);
     }
 
 

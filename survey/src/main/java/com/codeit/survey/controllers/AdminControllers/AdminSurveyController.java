@@ -4,7 +4,6 @@ import com.codeit.survey.entities.Survey;
 import com.codeit.survey.services.SurveyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,7 +23,7 @@ public class AdminSurveyController {
 
     @PutMapping("/admin/updateSurvey")
     public ResponseEntity<?> updateSurvey(@RequestBody Survey survey){
-        return surveyService.updateSurvey_admin(survey);
+        return surveyService.checkAndUpdateSurvey_admin(survey);
     }
 
 

@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
@@ -41,7 +42,6 @@ class SurveyServiceTest {
     @Mock
     QuestionService questionServiceMock;
 
-
     @Test
     void givenASurveyComingWithRequestFromClient_SuccessfullyAddItToDb(){
         Choice choice1 = new Choice(1, "TEST CHOICE 1", null);
@@ -49,7 +49,7 @@ class SurveyServiceTest {
 
         Question question = new Question(1, "TEST QUESTION 1", null ,Arrays.asList(choice1, choice2));
 
-        Survey survey = new Survey(1, null, null, "TEST NAME", Collections.singletonList(question));
+        Survey survey = new Survey(1,false ,null, null, "TEST NAME", Collections.singletonList(question));
 
         doReturn(survey).when(surveyRepoMock).save(survey);
 
@@ -65,18 +65,32 @@ class SurveyServiceTest {
 
     @Test
     void givenASurveyComingWithRequestFromClient_DetectTheConflictingSurveyName(){
-        Survey survey = new Survey(1, null, null, "TEST NAME", null);
+        Survey survey = new Survey(1, false, null, null, "TEST NAME", null);
         doReturn(true).when(surveyRepoMock).existsByName("TEST NAME");
         ResponseEntity responseEntity = surveyService.checkAndAddSurvey(survey);
         assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
     }
 
     @Test
+    void givenASurveyComingWithRequestFromClient_ShouldReturnBadRequest_WhenSurveyIsPublished(){
+        Survey clientSurvey = new Survey();
+        clientSurvey.setId(1);
+
+        Survey dbSurvey = new Survey();
+        dbSurvey.setPublished(true);
+
+        doReturn(Optional.of(dbSurvey)).when(surveyRepoMock).findById(1);
+
+        ResponseEntity responseEntity = surveyService.checkAndUpdateSurvey_admin(clientSurvey);
+        assertEquals(HttpStatus.BAD_REQUEST ,responseEntity.getStatusCode());
+        assertEquals("Survey can't be updated because it's published", responseEntity.getBody());
+    }
+    @Test
     void givenAUserId_ReturnItsSurveyDTOs(){
         SurveyUser surveyUser = new SurveyUser();
         LocalDateTime localDateTime = LocalDateTime.now();
 
-        List<Survey> surveys = Collections.singletonList(new Survey(1, surveyUser, localDateTime, "TEST NAME", null));
+        List<Survey> surveys = Collections.singletonList(new Survey(1, false, surveyUser, localDateTime, "TEST NAME", null));
 
         doReturn(surveyUser).when(userServiceMock).getUserById(10);
         doReturn(surveys).when(surveyRepoMock).findSurveysBySurveyUser(surveyUser);
@@ -97,6 +111,5 @@ class SurveyServiceTest {
         assertEquals(localDateTime, surveyDTO.getCreationDate());
         assertEquals(1, surveyDTO.getId());
     }
-
 
 }
