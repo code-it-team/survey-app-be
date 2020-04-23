@@ -10,6 +10,7 @@ import com.codeit.survey.repositories.SurveyRepo;
 import com.codeit.survey.services.QuestionService;
 import com.codeit.survey.services.SurveyService;
 import com.codeit.survey.services.UserService;
+import com.codeit.survey.services.adminServices.SurveyServiceAdmin;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +30,9 @@ import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 class SurveyServiceTest {
+
+    @InjectMocks
+    SurveyServiceAdmin surveyServiceAdmin;
 
     @InjectMocks
     SurveyService surveyService;
@@ -53,7 +57,7 @@ class SurveyServiceTest {
 
         doReturn(survey).when(surveyRepoMock).save(survey);
 
-        ResponseEntity responseEntity = surveyService.checkAndAddSurvey(survey);
+        ResponseEntity responseEntity = surveyServiceAdmin.checkAndAddSurvey(survey);
 
         assertEquals("TEST QUESTION 1", choice1.getQuestion().getBody());
         assertEquals("TEST QUESTION 1", choice2.getQuestion().getBody());
@@ -67,7 +71,7 @@ class SurveyServiceTest {
     void givenASurveyComingWithRequestFromClient_DetectTheConflictingSurveyName(){
         Survey survey = new Survey(1, false, null, null, "TEST NAME", null);
         doReturn(true).when(surveyRepoMock).existsByName("TEST NAME");
-        ResponseEntity responseEntity = surveyService.checkAndAddSurvey(survey);
+        ResponseEntity responseEntity = surveyServiceAdmin.checkAndAddSurvey(survey);
         assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
     }
 
@@ -81,7 +85,7 @@ class SurveyServiceTest {
 
         doReturn(Optional.of(dbSurvey)).when(surveyRepoMock).findById(1);
 
-        ResponseEntity responseEntity = surveyService.checkAndUpdateSurvey_admin(clientSurvey);
+        ResponseEntity responseEntity = surveyServiceAdmin.checkAndUpdateSurvey(clientSurvey);
         assertEquals(HttpStatus.BAD_REQUEST ,responseEntity.getStatusCode());
         assertEquals("Survey can't be updated because it's published", responseEntity.getBody());
     }

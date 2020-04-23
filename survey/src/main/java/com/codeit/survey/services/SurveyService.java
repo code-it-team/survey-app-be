@@ -2,16 +2,15 @@ package com.codeit.survey.services;
 
 import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
 import com.codeit.survey.DTOs.EntitiyListDTOs.SurveysDTO;
-import com.codeit.survey.entities.Choice;
-import com.codeit.survey.entities.Question;
 import com.codeit.survey.entities.Survey;
 import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.repositories.SurveyRepo;
+import com.codeit.survey.services.adminServices.SurveyServiceAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +20,16 @@ public class SurveyService {
     private UserService userService;
     private QuestionService questionService;
     private VerificationService verificationService;
+    private SurveyServiceAdmin surveyServiceAdmin;
 
 
     @Autowired
-    public SurveyService(SurveyRepo surveyRepo, UserService userService, QuestionService questionService, VerificationService verificationService){
+    public SurveyService(SurveyRepo surveyRepo, UserService userService, QuestionService questionService, VerificationService verificationService, SurveyServiceAdmin surveyServiceAdmin){
         this.surveyRepo = surveyRepo;
         this.userService = userService;
         this.questionService = questionService;
         this.verificationService = verificationService;
+        this.surveyServiceAdmin = surveyServiceAdmin;
     }
 
     private SurveysDTO createDTOFromSurveys(List<Survey> surveys){
@@ -47,41 +48,6 @@ public class SurveyService {
         return surveysDTO;
     }
 
-    private void setQuestionsAndChoices(Survey survey){
-        // set the survey of the question
-        for (Question question : survey.getQuestions()){
-            question.setSurvey(survey);
-            // set the question of the choice
-            for (Choice choice : question.getChoices()){
-                choice.setQuestion(question);
-            }
-        }
-    }
-
-    private ResponseEntity<?> addSurvey(Survey survey) {
-        survey.setCreationDate(java.time.LocalDateTime.now());
-        setQuestionsAndChoices(survey);
-        surveyRepo.save(survey);
-        return ResponseEntity.ok().build();
-    }
-
-    private boolean surveyNameNotUnique(Survey survey) {
-        return surveyRepo.existsByName(survey.getName());
-    }
-
-    private ResponseEntity<?> checkAndUpdateSurvey(Survey newSurvey, Survey survey) {
-        survey.setName(newSurvey.getName());
-        surveyRepo.save(survey);
-        return ResponseEntity.ok().build();
-    }
-
-
-    public ResponseEntity<?> checkAndAddSurvey(Survey survey){
-        if (surveyNameNotUnique(survey)){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-        return addSurvey(survey);
-    }
 
     public ResponseEntity<?> getSurveysByUserId_response(Integer userId){
         SurveyUser surveyUser = userService.getUserById(userId);
@@ -92,79 +58,39 @@ public class SurveyService {
         return ResponseEntity.ok(createDTOFromSurveys(surveys));
     }
 
-    /**
-     * @return null if Survey doesn't exist
-     * */
     public Survey findById(Integer id){
         return surveyRepo.findById(id).orElse(null);
     }
 
-    public List<Survey> getSurveysByUserId(Integer userId){
+     List<Survey> getSurveysByUserId(Integer userId){
         SurveyUser surveyUser = userService.getUserById(userId);
         return surveyRepo.findSurveysBySurveyUser(surveyUser);
     }
 
-    public ResponseEntity<?> deleteSurveyById_admin(Integer surveyId){
-        Survey survey = surveyRepo.findById(surveyId).orElse(null);
-        if (survey == null){
-            return ResponseEntity.badRequest().build();
-        }
-        surveyRepo.delete(survey);
-        return ResponseEntity.ok().build();
-    }
 
-    public ResponseEntity<?> checkAndUpdateSurvey_admin(Survey newSurvey){
-        Survey survey = surveyRepo.findById(newSurvey.getId()).orElse(null);
-        if (survey == null){
-            return ResponseEntity.badRequest().body("Survey doesn't exist");
-        }
-        if(survey.isPublished()){
-            return ResponseEntity.badRequest().body("Survey can't be updated because it's published");
-        }
-        return checkAndUpdateSurvey(newSurvey, survey);
-    }
-
-
-    public ResponseEntity<?> checkAndPublishSurvey_admin(Integer surveyId){
-        Survey surveyFromDB = findById(surveyId);
-        if(surveyFromDB == null){
-            return ResponseEntity.badRequest().body("No such Survey");
-        }
-
-        if(surveyFromDB.isPublished()){
-            return ResponseEntity.badRequest().body("Survey already published");
-        }
-
-        return publishSurvey(surveyFromDB);
-    }
-
-    private ResponseEntity<?> publishSurvey(Survey surveyFromDB) {
-        surveyFromDB.setPublished(true);
-        surveyRepo.save(surveyFromDB);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> checkAndAddSurvey(Survey survey){
+        return surveyServiceAdmin.checkAndAddSurvey(survey);
     }
 
     public ResponseEntity<?> checkAndPublishSurvey(Integer surveyId){
         if(verificationService.notUserSurvey(surveyId)){
             return ResponseEntity.badRequest().build();
         }
-        return checkAndPublishSurvey_admin(surveyId);
+        return surveyServiceAdmin.checkAndPublishSurvey(surveyId);
     }
-
 
     public ResponseEntity<?> deleteSurveyById(Integer surveyId){
         if (verificationService.notUserSurvey(surveyId)){
             return ResponseEntity.badRequest().build();
         }
-        return deleteSurveyById_admin(surveyId);
+        return surveyServiceAdmin.deleteSurveyById(surveyId);
     }
 
     public ResponseEntity<?> checkAndUpdateSurvey(Survey newSurvey){
-        Integer newSurveyId = newSurvey.getId();
-        if (verificationService.notUserSurvey(newSurveyId)){
+        if (verificationService.notUserSurvey(newSurvey.getId())){
             return ResponseEntity.badRequest().build();
         }
-        return checkAndUpdateSurvey_admin(newSurvey);
+        return surveyServiceAdmin.checkAndUpdateSurvey(newSurvey);
     }
 
 
