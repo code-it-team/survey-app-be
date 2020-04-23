@@ -3,6 +3,7 @@ package com.codeit.survey.entities;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,5 +24,6 @@ public class Question {
 
     @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.ALL)
     @Size(min = 2, max = 8)
+    @Valid
     private List<Choice> choices = new ArrayList<>();
 }

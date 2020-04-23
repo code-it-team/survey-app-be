@@ -1,21 +1,21 @@
 package com.codeit.survey.entities;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Getter @Setter @NoArgsConstructor
 @Entity(name = "survey_user")
 public class SurveyUser{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @NotNull
     Integer id;
 
     @Column(unique = true)

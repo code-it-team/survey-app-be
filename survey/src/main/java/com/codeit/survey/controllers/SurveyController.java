@@ -5,6 +5,7 @@ import com.codeit.survey.services.SurveyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 @RestController
 public class SurveyController {
@@ -16,7 +17,7 @@ public class SurveyController {
     }
 
     @PostMapping("/addSurvey")
-    public ResponseEntity<?> addSurvey(@RequestBody Survey survey){
+    public ResponseEntity<?> addSurvey(@Valid @RequestBody Survey survey){
         return surveyService.checkAndAddSurvey(survey);
     }
 
