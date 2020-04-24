@@ -1,5 +1,6 @@
 package com.codeit.survey.serviceTest;
 
+import com.codeit.survey.DTOs.DTOService.SurveyDTOService;
 import com.codeit.survey.DTOs.EntitiyListDTOs.SurveysDTO;
 import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
 import com.codeit.survey.entities.Choice;
@@ -35,7 +36,7 @@ class SurveyServiceTest {
     SurveyServiceAdmin surveyServiceAdmin;
 
     @InjectMocks
-    SurveyService surveyService;
+    SurveyDTOService surveyDTOService;
 
     @Mock
     SurveyRepo surveyRepoMock;
@@ -90,26 +91,15 @@ class SurveyServiceTest {
         assertEquals("Survey can't be updated because it's published", responseEntity.getBody());
     }
     @Test
-    void givenAUserId_ReturnItsSurveyDTOs(){
-        SurveyUser surveyUser = new SurveyUser();
+    void givenASurvey_CreateItsSurveyDTOSuccessfully(){
         LocalDateTime localDateTime = LocalDateTime.now();
 
-        List<Survey> surveys = Collections.singletonList(new Survey(1, false, surveyUser, localDateTime, "TEST NAME", null));
+        Survey survey =new Survey(1, false, null, localDateTime, "TEST NAME", null);
 
-        doReturn(surveyUser).when(userServiceMock).getUserById(10);
-        doReturn(surveys).when(surveyRepoMock).findSurveysBySurveyUser(surveyUser);
-
-        doReturn(null).when(userServiceMock).createDTOFromSurveyUser(surveyUser);
+        doReturn(null).when(userServiceMock).createDTOFromSurveyUser(null);
         doReturn(null).when(questionServiceMock).createDTOsFromQuestions(null);
 
-        ResponseEntity responseEntity = surveyService.getSurveysByUserId_response(10);
-
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-
-        SurveysDTO surveysDTO = (SurveysDTO) responseEntity.getBody();
-        assertEquals(1, surveysDTO.getSurveyDTOS().size());
-
-        SurveyDTO surveyDTO = surveysDTO.getSurveyDTOS().get(0);
+        SurveyDTO surveyDTO = surveyDTOService.createDTOFromSurvey(survey);
 
         assertEquals("TEST NAME", surveyDTO.getName());
         assertEquals(localDateTime, surveyDTO.getCreationDate());

@@ -1,5 +1,6 @@
 package com.codeit.survey.services;
 
+import com.codeit.survey.DTOs.DTOService.SurveyDTOService;
 import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
 import com.codeit.survey.DTOs.EntitiyListDTOs.SurveysDTO;
 import com.codeit.survey.entities.Survey;
@@ -18,36 +19,19 @@ import java.util.List;
 public class SurveyService {
     private SurveyRepo surveyRepo;
     private UserService userService;
-    private QuestionService questionService;
     private VerificationService verificationService;
     private SurveyServiceAdmin surveyServiceAdmin;
+    private SurveyDTOService surveyDTOService;
 
 
     @Autowired
-    public SurveyService(SurveyRepo surveyRepo, UserService userService, QuestionService questionService, VerificationService verificationService, SurveyServiceAdmin surveyServiceAdmin){
+    public SurveyService(SurveyRepo surveyRepo, UserService userService, VerificationService verificationService, SurveyServiceAdmin surveyServiceAdmin, SurveyDTOService surveyDTOService){
         this.surveyRepo = surveyRepo;
         this.userService = userService;
-        this.questionService = questionService;
         this.verificationService = verificationService;
         this.surveyServiceAdmin = surveyServiceAdmin;
+        this.surveyDTOService = surveyDTOService;
     }
-
-    private SurveysDTO createDTOFromSurveys(List<Survey> surveys){
-        SurveysDTO surveysDTO = new SurveysDTO(new ArrayList<>());
-
-        for (Survey survey : surveys){
-
-            surveysDTO.getSurveyDTOS().add(new SurveyDTO(
-                    survey.getId(),
-                    survey.getCreationDate(),
-                    survey.getName(),
-                    userService.createDTOFromSurveyUser(survey.getSurveyUser()),
-                    questionService.createDTOsFromQuestions(survey.getQuestions())
-            ));
-        }
-        return surveysDTO;
-    }
-
 
     public ResponseEntity<?> getSurveysByUserId_response(Integer userId){
         SurveyUser surveyUser = userService.getUserById(userId);
@@ -55,7 +39,7 @@ public class SurveyService {
             return ResponseEntity.badRequest().build();
         }
         List<Survey> surveys = surveyRepo.findSurveysBySurveyUser(surveyUser);
-        return ResponseEntity.ok(createDTOFromSurveys(surveys));
+        return ResponseEntity.ok(surveyDTOService.createDTOFromSurveys(surveys));
     }
 
     public Survey findById(Integer id){
@@ -68,6 +52,13 @@ public class SurveyService {
     }
 
 
+
+    public ResponseEntity<?> getSurveyById(Integer surveyId){
+        if(verificationService.notUserSurvey(surveyId)){
+            return ResponseEntity.badRequest().build();
+        }
+        return surveyServiceAdmin.getSurveyById(surveyId);
+    }
     public ResponseEntity<?> checkAndAddSurvey(Survey survey){
         return surveyServiceAdmin.checkAndAddSurvey(survey);
     }

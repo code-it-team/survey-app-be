@@ -1,5 +1,7 @@
 package com.codeit.survey.services.adminServices;
 
+import com.codeit.survey.DTOs.DTOService.SurveyDTOService;
+import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
 import com.codeit.survey.entities.Choice;
 import com.codeit.survey.entities.Question;
 import com.codeit.survey.entities.Survey;
@@ -9,13 +11,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 @Service
 public class SurveyServiceAdmin {
     private SurveyRepo surveyRepo;
+    private SurveyDTOService surveyDTOService;
 
     @Autowired
-    public SurveyServiceAdmin(SurveyRepo surveyRepo){
+    public SurveyServiceAdmin(SurveyRepo surveyRepo, SurveyDTOService surveyDTOService){
         this.surveyRepo = surveyRepo;
+        this.surveyDTOService = surveyDTOService;
     }
 
     public Survey findById(Integer id){
@@ -95,6 +102,17 @@ public class SurveyServiceAdmin {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         return addSurvey(survey);
+    }
+
+    public ResponseEntity<?> getSurveyById(Integer id){
+        Optional<Survey> survey = surveyRepo.findById(id);
+        if(survey.isPresent()){
+            SurveyDTO surveyDTO = surveyDTOService.createDTOFromSurvey(survey.get());
+            return ResponseEntity.ok().body(surveyDTO);
+        }
+        else{
+            return ResponseEntity.badRequest().body("No such Survey exists");
+        }
     }
 
 }

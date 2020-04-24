@@ -28,6 +28,11 @@ public class SurveyController {
         return surveyService.getSurveysByUserId_response(id);
     }
 
+    @GetMapping("/survey")
+    public ResponseEntity<?> getSurveyById(@RequestParam Integer surveyId){
+        return surveyService.getSurveyById(surveyId);
+    }
+
     @DeleteMapping("/deleteSurvey")
     public ResponseEntity<?> deleteSurveyById(@RequestParam Integer surveyId){
         return surveyService.deleteSurveyById(surveyId);

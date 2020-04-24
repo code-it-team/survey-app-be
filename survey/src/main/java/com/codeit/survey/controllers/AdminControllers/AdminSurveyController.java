@@ -40,6 +40,11 @@ public class AdminSurveyController {
         return surveyServiceAdmin.checkAndPublishSurvey(surveyId);
     }
 
+    @GetMapping("/admin/survey")
+    public ResponseEntity<?> getSurveyById(@RequestParam Integer surveyId){
+        return surveyServiceAdmin.getSurveyById(surveyId);
+    }
+
 
 
 
