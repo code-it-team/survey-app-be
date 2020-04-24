@@ -1,10 +1,14 @@
 package com.codeit.survey.controllers;
 
+import com.codeit.survey.controllers.validationInterface.ChoiceCreation;
 import com.codeit.survey.entities.Choice;
 import com.codeit.survey.services.ChoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 public class ChoiceController {
@@ -16,7 +20,7 @@ public class ChoiceController {
     }
 
     @PostMapping("/addChoice")
-    public ResponseEntity<?> addChoice(@RequestBody Choice choice){
+    public ResponseEntity<?> addChoice(@Validated({ChoiceCreation.class}) @RequestBody Choice choice){
         return choiceService.addChoice(choice);
     }
 

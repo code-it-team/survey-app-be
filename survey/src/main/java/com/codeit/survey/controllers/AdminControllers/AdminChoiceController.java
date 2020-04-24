@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 public class AdminChoiceController {
     private ChoiceService choiceService;
@@ -16,7 +18,7 @@ public class AdminChoiceController {
     }
 
     @PostMapping("/admin/addChoice")
-    public ResponseEntity<?> addChoice(@RequestBody Choice choice){
+    public ResponseEntity<?> addChoice(@Valid @RequestBody Choice choice){
         return choiceService.addChoice_admin(choice);
     }
 

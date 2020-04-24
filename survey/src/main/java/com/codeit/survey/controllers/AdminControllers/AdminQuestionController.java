@@ -1,12 +1,12 @@
 package com.codeit.survey.controllers.AdminControllers;
 
+import com.codeit.survey.controllers.validationInterface.QuestionCreation;
 import com.codeit.survey.entities.Question;
 import com.codeit.survey.services.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class AdminQuestionController {
@@ -19,7 +19,7 @@ public class AdminQuestionController {
     }
 
     @PostMapping("admin/SurveyAddQuestion")
-    public ResponseEntity<?> addQuestionsToSurvey(@RequestBody Question question){
+    public ResponseEntity<?> addQuestionToSurvey(@Validated(QuestionCreation.class) @RequestBody Question question){
         return questionService.addQuestionToSurvey_admin(question);
     }
 

@@ -1,6 +1,9 @@
 package com.codeit.survey.entities;
 
 
+import com.codeit.survey.controllers.validationInterface.ChoiceCreation;
+import com.codeit.survey.controllers.validationInterface.QuestionCreation;
+import com.codeit.survey.controllers.validationInterface.SurveyCreation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +24,7 @@ import java.util.List;
 public class Survey {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @NotNull(message = "Survey ID can't be null", groups = {ChoiceCreation.class, QuestionCreation.class})
     private Integer id;
 
     @Column(nullable = false)
@@ -28,7 +32,7 @@ public class Survey {
 
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false)
-    @NotNull
+    @NotNull(message = "A User must be specified", groups = {SurveyCreation.class})
     @Valid
     private SurveyUser surveyUser;
 
@@ -36,11 +40,11 @@ public class Survey {
     private LocalDateTime creationDate;
 
     @Column(nullable = false)
-    @NotBlank
+    @NotBlank(message = "Survey name can't be blank", groups = {SurveyCreation.class})
     private String name;
 
     @OneToMany(mappedBy = "survey", orphanRemoval = true, cascade = CascadeType.ALL)
-    @Size(min = 1)
+    @Size(min = 1, message = "The Survey must have at least one Question", groups = {SurveyCreation.class})
     @Valid
     private List<Question> questions = new ArrayList<>();
 }

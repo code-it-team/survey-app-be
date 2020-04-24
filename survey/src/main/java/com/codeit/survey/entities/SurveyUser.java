@@ -1,6 +1,7 @@
 package com.codeit.survey.entities;
 
 
+import com.codeit.survey.controllers.validationInterface.SurveyCreation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import java.util.List;
 public class SurveyUser{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @NotNull
+    @NotNull(message = "User ID can't be empty", groups = {SurveyCreation.class})
     Integer id;
 
     @Column(unique = true)

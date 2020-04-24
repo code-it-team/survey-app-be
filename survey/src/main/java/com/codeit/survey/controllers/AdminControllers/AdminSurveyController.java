@@ -1,9 +1,11 @@
 package com.codeit.survey.controllers.AdminControllers;
 
+import com.codeit.survey.controllers.validationInterface.SurveyCreation;
 import com.codeit.survey.entities.Survey;
 import com.codeit.survey.services.adminServices.SurveyServiceAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,7 +20,7 @@ public class AdminSurveyController {
     }
 
     @PostMapping("/admin/addSurvey")
-    public ResponseEntity<?> addSurvey(@Valid @RequestBody Survey survey){
+    public ResponseEntity<?> addSurvey(@Validated(SurveyCreation.class) @RequestBody Survey survey){
         return surveyServiceAdmin.checkAndAddSurvey(survey);
     }
 
