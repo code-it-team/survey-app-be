@@ -3,6 +3,7 @@ package com.codeit.survey.entities;
 import com.codeit.survey.controllers.validationInterface.ChoiceCreation;
 import com.codeit.survey.controllers.validationInterface.QuestionCreation;
 import com.codeit.survey.controllers.validationInterface.SurveyCreation;
+import com.codeit.survey.controllers.validationInterface.SurveyUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,8 +21,8 @@ public class Choice {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Size(max = 200, message = "Choice content length can't exceed 200 characters", groups = {SurveyCreation.class, QuestionCreation.class, ChoiceCreation.class})
-    @NotBlank(message = "The Choice can't have an empty body", groups = {SurveyCreation.class, QuestionCreation.class, ChoiceCreation.class})
+    @Size(max = 200, message = "Choice content length can't exceed 200 characters", groups = {SurveyCreation.class, QuestionCreation.class, ChoiceCreation.class, SurveyUpdate.class})
+    @NotBlank(message = "The Choice can't have an empty body", groups = {SurveyCreation.class, QuestionCreation.class, ChoiceCreation.class, SurveyUpdate.class})
     private String body;
 
     @ManyToOne(optional = false)

@@ -5,24 +5,27 @@ import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
 import com.codeit.survey.entities.Choice;
 import com.codeit.survey.entities.Question;
 import com.codeit.survey.entities.Survey;
+import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.repositories.SurveyRepo;
+import com.codeit.survey.services.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 @Service
 public class SurveyServiceAdmin {
     private SurveyRepo surveyRepo;
     private SurveyDTOService surveyDTOService;
+    private VerificationService verificationService;
 
     @Autowired
-    public SurveyServiceAdmin(SurveyRepo surveyRepo, SurveyDTOService surveyDTOService){
+    public SurveyServiceAdmin(SurveyRepo surveyRepo, SurveyDTOService surveyDTOService, VerificationService verificationService){
         this.surveyRepo = surveyRepo;
         this.surveyDTOService = surveyDTOService;
+        this.verificationService = verificationService;
     }
 
     public Survey findById(Integer id){
@@ -31,6 +34,10 @@ public class SurveyServiceAdmin {
 
     private ResponseEntity<?> updateSurvey(Survey newSurvey, Survey survey) {
         survey.setName(newSurvey.getName());
+        survey.getQuestions().clear();
+        survey.getQuestions().addAll(newSurvey.getQuestions());
+        setQuestionsAndChoices(survey);
+
         surveyRepo.save(survey);
         return ResponseEntity.ok().build();
     }
@@ -59,8 +66,9 @@ public class SurveyServiceAdmin {
         }
     }
 
-    private boolean surveyNameNotUnique(Survey survey) {
-        return surveyRepo.existsByName(survey.getName());
+    private boolean surveyNameNotUniquePerUser(Survey survey) {
+        SurveyUser surveyUser = verificationService.getAuthenticatedSurveyUser();
+        return surveyRepo.existsByNameAndSurveyUser(survey.getName(), surveyUser);
     }
 
 
@@ -81,7 +89,14 @@ public class SurveyServiceAdmin {
         if(survey.isPublished()){
             return ResponseEntity.badRequest().body("Survey can't be updated because it's published");
         }
+        if (userHasAnotherSurveyWithSameName(newSurvey, survey)){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
         return updateSurvey(newSurvey, survey);
+    }
+
+    private boolean userHasAnotherSurveyWithSameName(Survey newSurvey, Survey survey) {
+        return !newSurvey.getName().equalsIgnoreCase(survey.getName()) && surveyNameNotUniquePerUser(newSurvey);
     }
 
     public ResponseEntity<?> checkAndPublishSurvey(Integer surveyId){
@@ -98,7 +113,7 @@ public class SurveyServiceAdmin {
     }
 
     public ResponseEntity<?> checkAndAddSurvey(Survey survey){
-        if (surveyNameNotUnique(survey)){
+        if (surveyNameNotUniquePerUser(survey)){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
         return addSurvey(survey);

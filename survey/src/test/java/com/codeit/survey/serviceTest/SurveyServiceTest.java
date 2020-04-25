@@ -11,6 +11,7 @@ import com.codeit.survey.repositories.SurveyRepo;
 import com.codeit.survey.services.QuestionService;
 import com.codeit.survey.services.SurveyService;
 import com.codeit.survey.services.UserService;
+import com.codeit.survey.services.VerificationService;
 import com.codeit.survey.services.adminServices.SurveyServiceAdmin;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +48,9 @@ class SurveyServiceTest {
     @Mock
     QuestionService questionServiceMock;
 
+    @Mock
+    VerificationService verificationServiceMock;
+
     @Test
     void givenASurveyComingWithRequestFromClient_SuccessfullyAddItToDb(){
         Choice choice1 = new Choice(1, "TEST CHOICE 1", null);
@@ -70,8 +74,12 @@ class SurveyServiceTest {
 
     @Test
     void givenASurveyComingWithRequestFromClient_DetectTheConflictingSurveyName(){
+        SurveyUser surveyUser = new SurveyUser();
+        surveyUser.setId(10);
+
         Survey survey = new Survey(1, false, null, null, "TEST NAME", null);
-        doReturn(true).when(surveyRepoMock).existsByName("TEST NAME");
+        doReturn(surveyUser).when(verificationServiceMock).getAuthenticatedSurveyUser();
+        doReturn(true).when(surveyRepoMock).existsByNameAndSurveyUser("TEST NAME", surveyUser);
         ResponseEntity responseEntity = surveyServiceAdmin.checkAndAddSurvey(survey);
         assertEquals(HttpStatus.CONFLICT, responseEntity.getStatusCode());
     }

@@ -2,6 +2,7 @@ package com.codeit.survey.entities;
 
 
 import com.codeit.survey.controllers.validationInterface.SurveyCreation;
+import com.codeit.survey.controllers.validationInterface.SurveyUpdate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
