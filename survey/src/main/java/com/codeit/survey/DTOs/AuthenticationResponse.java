@@ -10,5 +10,5 @@ import java.io.Serializable;
 @Data @NoArgsConstructor @AllArgsConstructor
 public class AuthenticationResponse implements Serializable {
     private String jwt;
-    private SurveyUserDTO surveyUserDTO;
+    private SurveyUserDTO surveyUser;
 }

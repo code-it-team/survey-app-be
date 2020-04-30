@@ -17,6 +17,6 @@ public class SurveyDTO {
     private Integer id;
     private LocalDateTime creationDate;
     private String name;
-    private SurveyUserDTO surveyUserDTO;
-    private List<QuestionDTO> questionDTOs;
+    private SurveyUserDTO surveyUser;
+    private List<QuestionDTO> questions;
 }
