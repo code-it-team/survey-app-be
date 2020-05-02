@@ -9,5 +9,5 @@ import java.util.List;
 
 @Data @NoArgsConstructor @AllArgsConstructor
 public class SurveyUsersDTO {
-    List<SurveyUserDTO> surveyUserDTOList;
+    List<SurveyUserDTO> surveyUserList;
 }

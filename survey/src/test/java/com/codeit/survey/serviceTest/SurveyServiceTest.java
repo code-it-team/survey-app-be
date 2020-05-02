@@ -22,13 +22,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SurveyServiceTest {
@@ -112,6 +110,38 @@ class SurveyServiceTest {
         assertEquals("TEST NAME", surveyDTO.getName());
         assertEquals(localDateTime, surveyDTO.getCreationDate());
         assertEquals(1, surveyDTO.getId());
+    }
+
+    @Test
+    void givenAnUpdateForASurvey_SuccessfullyUpdate(){
+        SurveyUser surveyUser = new SurveyUser();
+
+        Question newQuestion1 = new Question();
+        newQuestion1.setBody("NEW Q 1");
+        Question newQuestion2 = new Question();
+        newQuestion2.setBody("NEW Q 2");
+        List<Question> newQuestions = new ArrayList<>(Arrays.asList(newQuestion1, newQuestion2));
+
+        Survey newSurvey = new Survey(1, false, surveyUser, null, "NEW SURVEY NAME", newQuestions);
+
+        Question oldQuestion1 = new Question();
+        Question oldQuestion2 = new Question();
+        List<Question> oldQuestions = new ArrayList<>(Arrays.asList(oldQuestion1, oldQuestion2));
+
+        Survey DBSurvey = new Survey(1, false, surveyUser, null, "OLD SURVEY NAME", oldQuestions);
+
+        doReturn(Optional.of(DBSurvey)).when(surveyRepoMock).findById(1);
+
+        doReturn(surveyUser).when(verificationServiceMock).getAuthenticatedSurveyUser();
+        doReturn(false).when(surveyRepoMock).existsByNameAndSurveyUser(newSurvey.getName(), surveyUser);
+        doReturn(DBSurvey).when(surveyRepoMock).save(DBSurvey);
+
+        ResponseEntity responseEntity = surveyServiceAdmin.checkAndUpdateSurvey(newSurvey);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(DBSurvey.getName(), "NEW SURVEY NAME");
+        assertEquals(DBSurvey.getQuestions().get(0).getBody(), "NEW Q 1");
+        assertEquals(DBSurvey.getQuestions().get(1).getBody(), "NEW Q 2");
     }
 
 }

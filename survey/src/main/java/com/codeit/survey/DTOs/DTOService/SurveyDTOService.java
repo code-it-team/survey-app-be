@@ -36,7 +36,7 @@ public class SurveyDTOService {
         SurveysDTO surveysDTO = new SurveysDTO(new ArrayList<>());
 
         for (Survey survey : surveys){
-            surveysDTO.getSurveyDTOS().add(createDTOFromSurvey(survey));
+            surveysDTO.getSurveys().add(createDTOFromSurvey(survey));
         }
         return surveysDTO;
     }

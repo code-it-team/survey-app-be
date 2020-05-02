@@ -75,7 +75,7 @@ public class SurveyServiceAdmin {
     public ResponseEntity<?> deleteSurveyById(Integer surveyId){
         Survey survey = surveyRepo.findById(surveyId).orElse(null);
         if (survey == null){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Survey doesn't exist");
         }
         surveyRepo.delete(survey);
         return ResponseEntity.ok().build();
@@ -90,7 +90,7 @@ public class SurveyServiceAdmin {
             return ResponseEntity.badRequest().body("Survey can't be updated because it's published");
         }
         if (userHasAnotherSurveyWithSameName(newSurvey, survey)){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("User already has a Survey with the name %s",newSurvey.getName()));
         }
         return updateSurvey(newSurvey, survey);
     }
@@ -102,7 +102,7 @@ public class SurveyServiceAdmin {
     public ResponseEntity<?> checkAndPublishSurvey(Integer surveyId){
         Survey surveyFromDB = findById(surveyId);
         if(surveyFromDB == null){
-            return ResponseEntity.badRequest().body("No such Survey");
+            return ResponseEntity.badRequest().body("Survey doesn't exist");
         }
 
         if(surveyFromDB.isPublished()){
@@ -114,7 +114,7 @@ public class SurveyServiceAdmin {
 
     public ResponseEntity<?> checkAndAddSurvey(Survey survey){
         if (surveyNameNotUniquePerUser(survey)){
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(String.format("The user already has a Survey with the name %s", survey.getName()));
         }
         return addSurvey(survey);
     }
@@ -126,7 +126,7 @@ public class SurveyServiceAdmin {
             return ResponseEntity.ok().body(surveyDTO);
         }
         else{
-            return ResponseEntity.badRequest().body("No such Survey exists");
+            return ResponseEntity.badRequest().body("Survey doesn't exist");
         }
     }
 

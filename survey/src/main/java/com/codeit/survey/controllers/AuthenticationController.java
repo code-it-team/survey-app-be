@@ -9,6 +9,7 @@ import com.codeit.survey.services.CustomUserDetailService;
 import com.codeit.survey.services.UserService;
 import com.codeit.survey.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -51,10 +52,9 @@ public class AuthenticationController {
                     )
             );
         }catch (Exception e){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong Username or Password");
         }
         // authentication done successfully
-        // get the userDetails
         UserDetails userDetails =  customUserDetailService.loadUserByUsername(authenticationRequest.getUsername());
 
         // get the SurveyUser object

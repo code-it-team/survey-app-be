@@ -109,7 +109,7 @@ public class QuestionService {
         Integer surveyId = question.getSurvey().getId();
         if ( verificationService.notUserSurvey(surveyId))
         {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("The Question's Survey doesn't belong to the User");
         }
 
         // if the user has proven that he owns all the questions, he can add as an admin

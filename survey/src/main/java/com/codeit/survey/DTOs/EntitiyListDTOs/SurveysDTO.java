@@ -10,5 +10,5 @@ import java.util.List;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class SurveysDTO {
-    List<SurveyDTO> surveyDTOS;
+    List<SurveyDTO> surveys;
 }
