@@ -1,6 +1,7 @@
 package com.codeit.survey.services;
 
 import com.codeit.survey.DTOs.EntityDTOs.ChoiceDTO;
+import com.codeit.survey.aspects.annotations.VerifySurveyBelongToUser;
 import com.codeit.survey.entities.Choice;
 import com.codeit.survey.repositories.ChoiceRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,8 @@ public class ChoiceService {
         return ResponseEntity.ok().build();
     }
 
+
+    @VerifySurveyBelongToUser
     public ResponseEntity<?> addChoice(Choice choice){
         Integer surveyId = choice.getQuestion().getSurvey().getId();
         if(verificationService.notUserSurvey(surveyId)) return ResponseEntity.badRequest().build();
@@ -72,6 +75,7 @@ public class ChoiceService {
         return deleteChoice_admin(choiceId);
     }
 
+    @VerifySurveyBelongToUser
     public ResponseEntity<?> updateChoice(Choice newChoice){
         Integer surveyId = newChoice.getQuestion().getSurvey().getId();
         if (verificationService.notUserSurvey(surveyId)) return ResponseEntity.badRequest().build();

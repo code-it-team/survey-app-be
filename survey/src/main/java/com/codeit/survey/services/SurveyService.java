@@ -1,8 +1,7 @@
 package com.codeit.survey.services;
 
 import com.codeit.survey.DTOs.DTOService.SurveyDTOService;
-import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
-import com.codeit.survey.DTOs.EntitiyListDTOs.SurveysDTO;
+import com.codeit.survey.aspects.annotations.VerifySurveyBelongToUser;
 import com.codeit.survey.entities.Survey;
 import com.codeit.survey.entities.SurveyUser;
 import com.codeit.survey.repositories.SurveyRepo;
@@ -11,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @Service
@@ -63,24 +61,18 @@ public class SurveyService {
         return surveyServiceAdmin.checkAndAddSurvey(survey);
     }
 
+    @VerifySurveyBelongToUser
     public ResponseEntity<?> checkAndPublishSurvey(Integer surveyId){
-        if(verificationService.notUserSurvey(surveyId)){
-            return ResponseEntity.badRequest().build();
-        }
         return surveyServiceAdmin.checkAndPublishSurvey(surveyId);
     }
 
+    @VerifySurveyBelongToUser
     public ResponseEntity<?> deleteSurveyById(Integer surveyId){
-        if (verificationService.notUserSurvey(surveyId)){
-            return ResponseEntity.badRequest().build();
-        }
         return surveyServiceAdmin.deleteSurveyById(surveyId);
     }
 
+    @VerifySurveyBelongToUser
     public ResponseEntity<?> checkAndUpdateSurvey(Survey newSurvey){
-        if (verificationService.notUserSurvey(newSurvey.getId())){
-            return ResponseEntity.badRequest().build();
-        }
         return surveyServiceAdmin.checkAndUpdateSurvey(newSurvey);
     }
 
