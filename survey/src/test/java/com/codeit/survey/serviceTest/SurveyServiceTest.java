@@ -1,15 +1,10 @@
 package com.codeit.survey.serviceTest;
 
 import com.codeit.survey.DTOs.DTOService.SurveyDTOService;
-import com.codeit.survey.DTOs.EntitiyListDTOs.SurveysDTO;
 import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
-import com.codeit.survey.entities.Choice;
-import com.codeit.survey.entities.Question;
-import com.codeit.survey.entities.Survey;
-import com.codeit.survey.entities.SurveyUser;
+import com.codeit.survey.entities.*;
 import com.codeit.survey.repositories.SurveyRepo;
 import com.codeit.survey.services.QuestionService;
-import com.codeit.survey.services.SurveyService;
 import com.codeit.survey.services.UserService;
 import com.codeit.survey.services.VerificationService;
 import com.codeit.survey.services.adminServices.SurveyServiceAdmin;
@@ -26,7 +21,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class SurveyServiceTest {
@@ -55,8 +49,7 @@ class SurveyServiceTest {
         Choice choice2 = new Choice(2, "TEST CHOICE 2", null);
 
         Question question = new Question(1, "TEST QUESTION 1", null ,Arrays.asList(choice1, choice2));
-
-        Survey survey = new Survey(1,false ,null, null, "TEST NAME", Collections.singletonList(question));
+        Survey survey = new Survey(1,null ,null, null, "TEST NAME", Collections.singletonList(question));
 
         doReturn(survey).when(surveyRepoMock).save(survey);
 
@@ -74,8 +67,7 @@ class SurveyServiceTest {
     void givenASurveyComingWithRequestFromClient_DetectTheConflictingSurveyName(){
         SurveyUser surveyUser = new SurveyUser();
         surveyUser.setId(10);
-
-        Survey survey = new Survey(1, false, null, null, "TEST NAME", null);
+        Survey survey = new Survey(1, null, null, null, "TEST NAME", null);
         doReturn(surveyUser).when(verificationServiceMock).getAuthenticatedSurveyUser();
         doReturn(true).when(surveyRepoMock).existsByNameAndSurveyUser("TEST NAME", surveyUser);
         ResponseEntity responseEntity = surveyServiceAdmin.checkAndAddSurvey(survey);
@@ -88,7 +80,8 @@ class SurveyServiceTest {
         clientSurvey.setId(1);
 
         Survey dbSurvey = new Survey();
-        dbSurvey.setPublished(true);
+        SurveyPublication surveyPublication = new SurveyPublication();
+        dbSurvey.setSurveyPublication(surveyPublication);
 
         doReturn(Optional.of(dbSurvey)).when(surveyRepoMock).findById(1);
 
@@ -99,8 +92,7 @@ class SurveyServiceTest {
     @Test
     void givenASurvey_CreateItsSurveyDTOSuccessfully(){
         LocalDateTime localDateTime = LocalDateTime.now();
-
-        Survey survey =new Survey(1, false, null, localDateTime, "TEST NAME", null);
+        Survey survey =new Survey(1, null, null, localDateTime, "TEST NAME", null);
 
         doReturn(null).when(userServiceMock).createDTOFromSurveyUser(null);
         doReturn(null).when(questionServiceMock).createDTOsFromQuestions(null);
@@ -121,14 +113,12 @@ class SurveyServiceTest {
         Question newQuestion2 = new Question();
         newQuestion2.setBody("NEW Q 2");
         List<Question> newQuestions = new ArrayList<>(Arrays.asList(newQuestion1, newQuestion2));
-
-        Survey newSurvey = new Survey(1, false, surveyUser, null, "NEW SURVEY NAME", newQuestions);
+        Survey newSurvey = new Survey(1, null, surveyUser, null, "NEW SURVEY NAME", newQuestions);
 
         Question oldQuestion1 = new Question();
         Question oldQuestion2 = new Question();
         List<Question> oldQuestions = new ArrayList<>(Arrays.asList(oldQuestion1, oldQuestion2));
-
-        Survey DBSurvey = new Survey(1, false, surveyUser, null, "OLD SURVEY NAME", oldQuestions);
+        Survey DBSurvey = new Survey(1, null, surveyUser, null, "OLD SURVEY NAME", oldQuestions);
 
         doReturn(Optional.of(DBSurvey)).when(surveyRepoMock).findById(1);
 

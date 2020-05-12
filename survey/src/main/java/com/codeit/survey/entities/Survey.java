@@ -28,8 +28,8 @@ public class Survey {
     @NotNull(message = "Survey ID can't be null", groups = {ChoiceCreation.class, QuestionCreation.class, SurveyUpdate.class})
     private Integer id;
 
-    @Column(nullable = false)
-    private boolean published = false;
+    @OneToOne(cascade = CascadeType.ALL)
+    private SurveyPublication surveyPublication;
 
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false)
@@ -48,4 +48,8 @@ public class Survey {
     @Size(min = 1, message = "The Survey must have at least one Question", groups = {SurveyCreation.class, SurveyUpdate.class})
     @Valid
     private List<Question> questions = new ArrayList<>();
+
+    public boolean isPublished() {
+        return surveyPublication != null;
+    }
 }

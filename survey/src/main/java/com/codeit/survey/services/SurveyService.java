@@ -62,8 +62,8 @@ public class SurveyService {
     }
 
     @VerifySurveyBelongToUser
-    public ResponseEntity<?> checkAndPublishSurvey(Integer surveyId){
-        return surveyServiceAdmin.checkAndPublishSurvey(surveyId);
+    public ResponseEntity<?> checkAndPublishSurvey(Integer surveyId, String clientURL){
+        return surveyServiceAdmin.checkAndPublishSurvey(surveyId, clientURL);
     }
 
     @VerifySurveyBelongToUser

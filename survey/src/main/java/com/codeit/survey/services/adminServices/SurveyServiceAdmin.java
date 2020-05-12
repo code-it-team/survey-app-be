@@ -2,11 +2,9 @@ package com.codeit.survey.services.adminServices;
 
 import com.codeit.survey.DTOs.DTOService.SurveyDTOService;
 import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
-import com.codeit.survey.entities.Choice;
-import com.codeit.survey.entities.Question;
-import com.codeit.survey.entities.Survey;
-import com.codeit.survey.entities.SurveyUser;
+import com.codeit.survey.entities.*;
 import com.codeit.survey.repositories.SurveyRepo;
+import com.codeit.survey.services.SurveyPublicationService;
 import com.codeit.survey.services.VerificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,12 +18,14 @@ public class SurveyServiceAdmin {
     private SurveyRepo surveyRepo;
     private SurveyDTOService surveyDTOService;
     private VerificationService verificationService;
+    private SurveyPublicationService surveyPublicationService;
 
     @Autowired
-    public SurveyServiceAdmin(SurveyRepo surveyRepo, SurveyDTOService surveyDTOService, VerificationService verificationService){
+    public SurveyServiceAdmin(SurveyRepo surveyRepo, SurveyDTOService surveyDTOService, VerificationService verificationService, SurveyPublicationService surveyPublicationService){
         this.surveyRepo = surveyRepo;
         this.surveyDTOService = surveyDTOService;
         this.verificationService = verificationService;
+        this.surveyPublicationService = surveyPublicationService;
     }
 
     public Survey findById(Integer id){
@@ -42,8 +42,8 @@ public class SurveyServiceAdmin {
         return ResponseEntity.ok().build();
     }
 
-    private ResponseEntity<?> publishSurvey(Survey surveyFromDB) {
-        surveyFromDB.setPublished(true);
+    private ResponseEntity<?> publishSurvey(Survey surveyFromDB, String clientURL) {
+        surveyPublicationService.publishSurvey(surveyFromDB, clientURL);
         surveyRepo.save(surveyFromDB);
         return ResponseEntity.ok().build();
     }
@@ -86,6 +86,7 @@ public class SurveyServiceAdmin {
         if (survey == null){
             return ResponseEntity.badRequest().body("Survey doesn't exist");
         }
+
         if(survey.isPublished()){
             return ResponseEntity.badRequest().body("Survey can't be updated because it's published");
         }
@@ -99,17 +100,15 @@ public class SurveyServiceAdmin {
         return !newSurvey.getName().equalsIgnoreCase(survey.getName()) && surveyNameNotUniquePerUser(newSurvey);
     }
 
-    public ResponseEntity<?> checkAndPublishSurvey(Integer surveyId){
+    public ResponseEntity<?> checkAndPublishSurvey(Integer surveyId, String clientURL){
         Survey surveyFromDB = findById(surveyId);
         if(surveyFromDB == null){
             return ResponseEntity.badRequest().body("Survey doesn't exist");
         }
-
         if(surveyFromDB.isPublished()){
             return ResponseEntity.badRequest().body("Survey already published");
         }
-
-        return publishSurvey(surveyFromDB);
+        return publishSurvey(surveyFromDB, clientURL);
     }
 
     public ResponseEntity<?> checkAndAddSurvey(Survey survey){

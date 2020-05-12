@@ -36,7 +36,7 @@ public class SurveyBuilder {
     }
 
     public Survey buildSurvey(){
-        return new Survey(null, false,surveyUser, creationDate, name, questions);
+        return new Survey(null, null, surveyUser, creationDate, name, questions);
     }
 
 }

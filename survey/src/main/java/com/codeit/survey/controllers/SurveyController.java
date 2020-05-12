@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 public class SurveyController {
     private SurveyService surveyService;
@@ -44,8 +46,8 @@ public class SurveyController {
     }
 
     @PutMapping("/publishSurvey")
-    public ResponseEntity<?> publishSurvey(@RequestParam Integer surveyId){
-        return surveyService.checkAndPublishSurvey(surveyId);
+    public ResponseEntity<?> publishSurvey(@RequestParam Integer surveyId, HttpServletRequest request){
+        return surveyService.checkAndPublishSurvey(surveyId, request.getRequestURL().toString());
     }
 
 
