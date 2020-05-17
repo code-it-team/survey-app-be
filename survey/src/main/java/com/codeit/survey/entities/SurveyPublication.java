@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,7 +28,7 @@ public class SurveyPublication {
     private Survey survey;
 
     @OneToMany(mappedBy = "surveyPublication", cascade = CascadeType.ALL)
-    List<SurveySubmission> surveySubmissionList;
+    List<SurveySubmission> surveySubmissionList = new ArrayList<>();
 
     public SurveyPublication(String link, LocalDateTime publicationDate, Survey survey) {
         this.link = link;

@@ -84,8 +84,8 @@ public class SurveySubmissionService {
     }
 
     private void createNewSurveySubmission(SurveySubmissionDTO surveySubmissionDTO, Survey surveyFromDB) {
-
         SurveySubmission surveySubmission = new SurveySubmission();
+
         surveySubmission.setSubmissionDate(LocalDateTime.now());
 
         List<QuestionSubmission> questionsSubmissions =  createQuestionsSubmissions( surveySubmissionDTO, surveyFromDB);
