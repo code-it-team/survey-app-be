@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter @Setter  @NoArgsConstructor
@@ -24,6 +25,9 @@ public class SurveyPublication {
     @OneToOne
     @JoinColumn(unique = true, nullable = false)
     private Survey survey;
+
+    @OneToMany(mappedBy = "surveyPublication", cascade = CascadeType.ALL)
+    List<SurveySubmission> surveySubmissionList;
 
     public SurveyPublication(String link, LocalDateTime publicationDate, Survey survey) {
         this.link = link;

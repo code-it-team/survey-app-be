@@ -19,4 +19,5 @@ public class SurveyDTO {
     private String name;
     private SurveyUserDTO surveyUser;
     private List<QuestionDTO> questions;
+    private boolean isPublished;
 }

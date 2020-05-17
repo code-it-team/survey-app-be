@@ -28,7 +28,8 @@ public class SurveyDTOService {
                 survey.getCreationDate(),
                 survey.getName(),
                 userService.createDTOFromSurveyUser(survey.getSurveyUser()),
-                questionService.createDTOsFromQuestions(survey.getQuestions())
+                questionService.createDTOsFromQuestions(survey.getQuestions()),
+                survey.isPublished()
         );
     }
 
