@@ -2,6 +2,7 @@ package com.codeit.survey.services.adminServices;
 
 import com.codeit.survey.DTOs.DTOService.SurveyDTOService;
 import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
+import com.codeit.survey.DTOs.PublicationLinkDTO;
 import com.codeit.survey.entities.*;
 import com.codeit.survey.repositories.SurveyRepo;
 import com.codeit.survey.services.SurveyPublicationService;
@@ -44,7 +45,6 @@ public class SurveyServiceAdmin {
 
     private ResponseEntity<?> publishSurvey(Survey surveyFromDB, String clientURL) {
         surveyPublicationService.publishSurvey(surveyFromDB, clientURL);
-        surveyRepo.save(surveyFromDB);
         return ResponseEntity.ok().build();
     }
 
@@ -70,7 +70,6 @@ public class SurveyServiceAdmin {
         SurveyUser surveyUser = verificationService.getAuthenticatedSurveyUser();
         return surveyRepo.existsByNameAndSurveyUser(survey.getName(), surveyUser);
     }
-
 
     public ResponseEntity<?> deleteSurveyById(Integer surveyId){
         Survey survey = surveyRepo.findById(surveyId).orElse(null);
@@ -127,6 +126,18 @@ public class SurveyServiceAdmin {
         else{
             return ResponseEntity.badRequest().body("Survey doesn't exist");
         }
+    }
+
+    public ResponseEntity<?> getSurveyPublicationLink(Integer surveyId){
+        Optional<Survey> survey = surveyRepo.findById(surveyId);
+
+        if(!survey.isPresent())return ResponseEntity.badRequest().body("No such Survey exists");
+
+
+        if(!survey.get().isPublished())return ResponseEntity.badRequest().body("The Survey hasn't been published yet");
+
+        String link = survey.get().getSurveyPublication().getLink();
+        return ResponseEntity.ok(new PublicationLinkDTO(link));
     }
 
 }

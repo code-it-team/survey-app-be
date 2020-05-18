@@ -50,6 +50,11 @@ public class SurveyController {
         return surveyService.checkAndPublishSurvey(surveyId, request.getRequestURL().toString());
     }
 
+    @GetMapping("/publicationLink")
+    public ResponseEntity<?> getSurveyPublicationLink(@RequestParam Integer surveyId){
+        return surveyService.getSurveyPublicationLink(surveyId);
+    }
+
 
 
 }

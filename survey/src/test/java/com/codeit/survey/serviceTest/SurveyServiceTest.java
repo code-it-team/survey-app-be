@@ -2,6 +2,7 @@ package com.codeit.survey.serviceTest;
 
 import com.codeit.survey.DTOs.DTOService.SurveyDTOService;
 import com.codeit.survey.DTOs.EntityDTOs.SurveyDTO;
+import com.codeit.survey.DTOs.PublicationLinkDTO;
 import com.codeit.survey.entities.*;
 import com.codeit.survey.repositories.SurveyRepo;
 import com.codeit.survey.services.QuestionService;
@@ -132,6 +133,43 @@ class SurveyServiceTest {
         assertEquals(DBSurvey.getName(), "NEW SURVEY NAME");
         assertEquals(DBSurvey.getQuestions().get(0).getBody(), "NEW Q 1");
         assertEquals(DBSurvey.getQuestions().get(1).getBody(), "NEW Q 2");
+    }
+
+    @Test
+    void givenASurveyId_DetectItDoesntExist_WhenGettingPublicationLink(){
+        doReturn(Optional.empty()).when(surveyRepoMock).findById(22);
+
+        ResponseEntity result = surveyServiceAdmin.getSurveyPublicationLink(22);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("No such Survey exists", result.getBody());
+    }
+
+    @Test
+    void givenASurveyId_DetectThatItsNotPublished_WhenGettingPublicationLink(){
+        Survey survey = new Survey();
+        doReturn(Optional.of(survey)).when(surveyRepoMock).findById(11);
+
+        ResponseEntity result = surveyServiceAdmin.getSurveyPublicationLink(11);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("The Survey hasn't been published yet", result.getBody());
+    }
+
+    @Test
+    void givenASurveyId_ReturnItsPublicationLinkDTO(){
+        Survey survey = new Survey();
+        SurveyPublication surveyPublication = new SurveyPublication();
+        surveyPublication.setLink("TEST LINK");
+        survey.setSurveyPublication(surveyPublication);
+
+        doReturn(Optional.of(survey)).when(surveyRepoMock).findById(22);
+
+        ResponseEntity result = surveyServiceAdmin.getSurveyPublicationLink(22);
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        String publicationLink = ((PublicationLinkDTO) result.getBody()).getPublicationLink();
+        assertEquals("TEST LINK", publicationLink);
     }
 
 }

@@ -19,6 +19,7 @@ public class SurveyPublicationService {
         String surveyPublicationURL = generateSurveyPublicationURL(survey.getId() ,clientURL);
 
         SurveyPublication surveyPublication = new SurveyPublication(surveyPublicationURL, java.time.LocalDateTime.now(), survey);
+
         survey.setSurveyPublication(surveyPublication);
 
         surveyRepo.save(survey);

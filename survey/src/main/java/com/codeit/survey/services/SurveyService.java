@@ -76,5 +76,10 @@ public class SurveyService {
         return surveyServiceAdmin.checkAndUpdateSurvey(newSurvey);
     }
 
+    @VerifySurveyBelongToUser
+    public ResponseEntity<?> getSurveyPublicationLink(Integer surveyId){
+        return surveyServiceAdmin.getSurveyPublicationLink(surveyId);
+    }
+
 
 }
