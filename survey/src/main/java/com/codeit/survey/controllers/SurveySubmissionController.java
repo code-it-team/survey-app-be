@@ -1,26 +1,32 @@
 package com.codeit.survey.controllers;
 
 import com.codeit.survey.DTOs.SurveySubmissionDTO;
+import com.codeit.survey.services.SurveyStatisticsService;
 import com.codeit.survey.services.SurveySubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class SurveySubmissionController {
     private SurveySubmissionService surveySubmissionService;
+    private SurveyStatisticsService surveyStatisticsService;
 
     @Autowired
-    public SurveySubmissionController(SurveySubmissionService surveySubmissionService) {
+    public SurveySubmissionController(SurveySubmissionService surveySubmissionService, SurveyStatisticsService surveyStatisticsService) {
+        this.surveySubmissionService = surveySubmissionService;
         this.surveySubmissionService = surveySubmissionService;
     }
 
     @PostMapping("/submitSurvey")
     public ResponseEntity<?> submitSurvey(@RequestBody @Validated SurveySubmissionDTO surveySubmissionDTO){
         return surveySubmissionService.checkSurveyAndSubmit(surveySubmissionDTO);
+    }
+
+    @GetMapping("/surveyStatistics")
+    public ResponseEntity<?> getSurveyStatistics(@RequestParam Integer surveyId){
+        return surveyStatisticsService.getSurveyStatistics(surveyId);
     }
 
 
