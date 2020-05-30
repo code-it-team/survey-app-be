@@ -1,5 +1,6 @@
 package com.codeit.survey.serviceTest;
 
+import com.codeit.survey.DTOs.QuestionStatisticsDTO;
 import com.codeit.survey.DTOs.SurveyStatisticsDTO;
 import com.codeit.survey.entities.*;
 import com.codeit.survey.services.SurveyService;
@@ -12,9 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -49,30 +49,64 @@ public class SurveyStatisticsServiceTest {
     }
 
     @Test
-    void givenASurveyIdToGetStatistics_QuestionListIsEmpty(){
-        List<Question> questionList = new ArrayList<>();
-        Survey survey = new Survey(3, null, null, null, "TEST NAME", questionList);
+    void givenASurveyIdToGetStatistics_GetItsSurveyStatisticsDTO(){
+        Survey survey = createASurveyWithOneQuestionAndTwoSubmissions();
 
-        SurveyPublication surveyPublication = new SurveyPublication();
-        surveyPublication.setSurvey(survey);
-        surveyPublication.setSurveySubmissionList(Arrays.asList(new SurveySubmission(), new SurveySubmission()));
+        doReturn(survey).when(surveyServiceMock).findById(10);
 
-        survey.setSurveyPublication(surveyPublication);
-
-        doReturn(survey).when(surveyServiceMock).findById(3);
-
-        ResponseEntity result = surveyStatisticsService.getSurveyStatistics_admin(3);
+        ResponseEntity result = surveyStatisticsService.getSurveyStatistics_admin(10);
         SurveyStatisticsDTO surveyStatisticsDTO = (SurveyStatisticsDTO) result.getBody();
 
+
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals("TEST NAME", surveyStatisticsDTO.getSurveyName());
-        assertEquals(3, surveyStatisticsDTO.getSurveyId());
         assertEquals(2, surveyStatisticsDTO.getNumberOfSubmissions());
-        assertEquals(0, surveyStatisticsDTO.getQuestionStatistics().size());
+        assertEquals("SURVEY", surveyStatisticsDTO.getSurveyName());
+        assertEquals(10, surveyStatisticsDTO.getSurveyId());
+
+        assertEquals(1, surveyStatisticsDTO.getQuestionStatistics().size());
+
+        QuestionStatisticsDTO questionStatisticsDTO = surveyStatisticsDTO.getQuestionStatistics().get(0);
+        assertEquals("QUESTION", questionStatisticsDTO.getQuestionBody());
+        assertEquals(20, questionStatisticsDTO.getQuestionId());
+
+        assertEquals(2, questionStatisticsDTO.getChoiceStatistics().size());
+        assertEquals(50.0f, questionStatisticsDTO.getChoiceStatistics().get(0).getPercentageOfSubmissions());
+        assertEquals(50.0f, questionStatisticsDTO.getChoiceStatistics().get(1).getPercentageOfSubmissions());
     }
 
+    private Survey createASurveyWithOneQuestionAndTwoSubmissions() {
+        Survey survey = new Survey(10, null, null, null, "SURVEY",  null);
+
+        Question question = new Question(20, "QUESTION", survey, null);
 
 
+        Choice choice1 = new Choice(30, "CHOICE 1", question);
+        Choice choice2 = new Choice(40, "CHOICE 2", question);
+
+        question.setChoices(Arrays.asList(choice1, choice2));
+
+        survey.setQuestions(Collections.singletonList(question));
+
+        SurveyPublication surveyPublication = new SurveyPublication("LINK", null, survey);
+
+        SurveySubmission surveySubmission1 = new SurveySubmission();
+        QuestionSubmission questionSubmission1 = new QuestionSubmission(question, choice1);
+
+        surveySubmission1.setSurveyPublication(surveyPublication);
+        surveySubmission1.setQuestionSubmissions(Arrays.asList(questionSubmission1));
+
+
+        SurveySubmission surveySubmission2 = new SurveySubmission();
+        QuestionSubmission questionSubmission2 = new QuestionSubmission(question, choice2);
+
+        surveySubmission2.setSurveyPublication(surveyPublication);
+        surveySubmission2.setQuestionSubmissions(Arrays.asList(questionSubmission2));
+
+
+        surveyPublication.setSurveySubmissionList(Arrays.asList(surveySubmission1, surveySubmission2));
+        survey.setSurveyPublication(surveyPublication);
+        return survey;
+    }
 
 
 }
