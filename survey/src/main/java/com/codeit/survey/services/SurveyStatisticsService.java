@@ -26,7 +26,7 @@ public class SurveyStatisticsService {
         return getSurveyStatistics_admin(surveyId);
     }
 
-    private ResponseEntity<?> getSurveyStatistics_admin(Integer surveyId){
+    public ResponseEntity<?> getSurveyStatistics_admin(Integer surveyId){
         Survey survey = surveyService.findById(surveyId);
 
         if (survey == null) return ResponseEntity.badRequest().body(String.format("The Survey %s doesn't exist", surveyId));
@@ -70,7 +70,7 @@ public class SurveyStatisticsService {
                 .filter(questionSubmission -> questionSubmission.getSelectedChoice().getId().equals(choice.getId()))
                 .collect(Collectors.toList());
 
-        float percentageOfSubmissionsForTheGivenQuestion = questionSubmissionsWithTheGivenChoice.size() / (float) questionSubmissions.size();
+        float percentageOfSubmissionsForTheGivenQuestion = (questionSubmissionsWithTheGivenChoice.size() / (float) questionSubmissions.size()) * 100;
 
         return new ChoiceStatisticsDTO(choice.getId(), choice.getBody(), percentageOfSubmissionsForTheGivenQuestion);
     }

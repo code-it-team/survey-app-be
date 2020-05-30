@@ -16,7 +16,7 @@ public class SurveySubmissionController {
     @Autowired
     public SurveySubmissionController(SurveySubmissionService surveySubmissionService, SurveyStatisticsService surveyStatisticsService) {
         this.surveySubmissionService = surveySubmissionService;
-        this.surveySubmissionService = surveySubmissionService;
+        this.surveyStatisticsService = surveyStatisticsService;
     }
 
     @PostMapping("/submitSurvey")
