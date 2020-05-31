@@ -28,7 +28,7 @@ public class Survey {
     @NotNull(message = "Survey ID can't be null", groups = {ChoiceCreation.class, QuestionCreation.class, SurveyUpdate.class})
     private Integer id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "survey")
     private SurveyPublication surveyPublication;
 
     @ManyToOne()
