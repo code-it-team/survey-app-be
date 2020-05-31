@@ -52,9 +52,6 @@ public class SurveyService {
 
 
     public ResponseEntity<?> getSurveyById(Integer surveyId){
-        if(verificationService.notUserSurvey(surveyId)){
-            return ResponseEntity.badRequest().build();
-        }
         return surveyServiceAdmin.getSurveyById(surveyId);
     }
     public ResponseEntity<?> checkAndAddSurvey(Survey survey){
