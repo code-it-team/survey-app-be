@@ -1,0 +1,7 @@
+version: '3'
+services:
+  survey:
+    container_name: survey_container
+    image: survey
+    ports:
+      - 8085:8085
